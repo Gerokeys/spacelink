@@ -24,7 +24,7 @@ export function Navbar() {
             alt="SpaceLink"
             width={220}
             height={80}
-            className="h-20 w-auto"
+            className="h-20 w-auto border-2 border-red-500 rounded"
             priority
           />
         </Link>
