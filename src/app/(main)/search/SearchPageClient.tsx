@@ -127,13 +127,23 @@ export function SearchPageClient() {
       {/* Main content — split layout */}
       <div className="flex flex-1 overflow-hidden">
 
+        {/* Mobile filters drawer backdrop */}
+        {showFilters && (
+          <div
+            className="fixed inset-0 z-30 bg-black/40 lg:hidden"
+            onClick={() => setShowFilters(false)}
+          />
+        )}
+
         {/* Left panel — filters + listings */}
-        <div className="flex flex-1 overflow-hidden">
-          {/* Filters sidebar */}
+        <div className="flex flex-1 overflow-hidden min-w-0">
+          {/* Filters sidebar — desktop: inline, mobile: slide-in drawer */}
           <div className={cn(
-            "shrink-0 border-r border-gray-200 bg-white overflow-y-auto",
-            "hidden lg:block w-72",
-            showFilters && "!block w-full lg:w-72 absolute lg:relative z-20 bg-white inset-0 top-auto"
+            "shrink-0 border-r border-stone-200 bg-white overflow-y-auto transition-transform",
+            "w-72",
+            showFilters
+              ? "fixed inset-y-0 left-0 z-40 shadow-xl lg:relative lg:shadow-none lg:translate-x-0"
+              : "hidden lg:block"
           )}>
             <div className="p-4">
               <SearchFiltersPanel

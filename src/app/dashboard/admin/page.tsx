@@ -75,34 +75,36 @@ export default async function AdminOverviewPage() {
             <p>All caught up — no pending listings</p>
           </div>
         ) : (
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="text-xs text-gray-400 border-b border-gray-100">
-                <th className="text-left px-6 py-3 font-medium">Title</th>
-                <th className="text-left px-6 py-3 font-medium">Owner</th>
-                <th className="text-left px-6 py-3 font-medium">Type</th>
-                <th className="text-left px-6 py-3 font-medium">Price</th>
-                <th className="text-left px-6 py-3 font-medium">Submitted</th>
-                <th className="px-6 py-3" />
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-50">
-              {stats.recentPending.map((listing) => (
-                <tr key={listing.id} className="hover:bg-gray-50 transition-colors">
-                  <td className="px-6 py-3 font-medium text-gray-900 max-w-[200px] truncate">{listing.title}</td>
-                  <td className="px-6 py-3 text-gray-500">{listing.owner.name ?? listing.owner.email}</td>
-                  <td className="px-6 py-3 text-gray-500">{listing.type}</td>
-                  <td className="px-6 py-3 text-gray-900">{formatPrice(listing.price, listing.currency)}</td>
-                  <td className="px-6 py-3 text-gray-400">{new Date(listing.createdAt).toLocaleDateString()}</td>
-                  <td className="px-6 py-3">
-                    <Link href="/dashboard/admin/listings?status=PENDING" className="text-teal-600 hover:text-teal-700 font-medium text-xs">
-                      Review →
-                    </Link>
-                  </td>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm min-w-[600px]">
+              <thead>
+                <tr className="text-xs text-gray-400 border-b border-gray-100">
+                  <th className="text-left px-6 py-3 font-medium">Title</th>
+                  <th className="text-left px-6 py-3 font-medium">Owner</th>
+                  <th className="text-left px-6 py-3 font-medium">Type</th>
+                  <th className="text-left px-6 py-3 font-medium">Price</th>
+                  <th className="text-left px-6 py-3 font-medium">Submitted</th>
+                  <th className="px-6 py-3" />
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="divide-y divide-gray-50">
+                {stats.recentPending.map((listing) => (
+                  <tr key={listing.id} className="hover:bg-gray-50 transition-colors">
+                    <td className="px-6 py-3 font-medium text-gray-900 max-w-[200px] truncate">{listing.title}</td>
+                    <td className="px-6 py-3 text-gray-500">{listing.owner.name ?? listing.owner.email}</td>
+                    <td className="px-6 py-3 text-gray-500">{listing.type}</td>
+                    <td className="px-6 py-3 text-gray-900">{formatPrice(listing.price, listing.currency)}</td>
+                    <td className="px-6 py-3 text-gray-400">{new Date(listing.createdAt).toLocaleDateString()}</td>
+                    <td className="px-6 py-3">
+                      <Link href="/dashboard/admin/listings?status=PENDING" className="text-teal-600 hover:text-teal-700 font-medium text-xs">
+                        Review →
+                      </Link>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         )}
       </div>
     </div>
