@@ -37,9 +37,9 @@ export function Footer() {
               <Image
                 src="/images/logo.png"
                 alt="SpaceLink"
-                width={200}
-                height={68}
-                className="h-16 w-auto"
+                width={140}
+                height={48}
+                className="h-12 w-auto"
               />
             </Link>
             <p className="text-sm leading-relaxed mb-5">

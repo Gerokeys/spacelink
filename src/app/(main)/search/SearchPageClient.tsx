@@ -67,7 +67,7 @@ export function SearchPageClient() {
   }, [])
 
   return (
-    <div className="flex flex-col h-[calc(100vh-80px)]">
+    <div className="flex flex-col h-[calc(100vh-64px)]">
       {/* Top search bar */}
       <div className="border-b border-gray-200 bg-white px-4 py-3 shrink-0">
         <div className="max-w-3xl">

@@ -16,7 +16,7 @@ export default function SearchPage() {
 
 function SearchSkeleton() {
   return (
-    <div className="flex flex-col h-[calc(100vh-80px)] animate-pulse">
+    <div className="flex flex-col h-[calc(100vh-64px)] animate-pulse">
       <div className="border-b border-slate-200 px-4 py-3 h-20 bg-slate-50 shrink-0" />
       <div className="border-b border-slate-200 px-4 py-2.5 h-12 bg-white shrink-0" />
       <div className="flex flex-1 overflow-hidden">
