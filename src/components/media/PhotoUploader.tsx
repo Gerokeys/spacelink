@@ -4,10 +4,12 @@ import { useState, useCallback } from "react"
 import { useDropzone } from "react-dropzone"
 import Image from "next/image"
 import { toast } from "sonner"
-import { Upload, X, Star, Loader2, ImagePlus } from "lucide-react"
-import { Button } from "@/components/ui/button"
+import { X, Star, Loader2, ImagePlus } from "lucide-react"
 import { cn } from "@/lib/utils"
-import { MAX_PHOTO_SIZE, MAX_PHOTOS_PER_LISTING } from "@/lib/media"
+
+const MAX_PHOTO_SIZE = 10 * 1024 * 1024  // 10MB
+const MAX_PHOTOS = 30
+const ACCEPTED_TYPES = { "image/jpeg": [], "image/png": [], "image/webp": [] }
 
 interface Photo {
   id: string
@@ -59,11 +61,11 @@ export function PhotoUploader({ listingId, initialPhotos = [] }: PhotoUploaderPr
   }, [listingId])
 
   const onDrop = useCallback(async (accepted: File[]) => {
-    const remaining = MAX_PHOTOS_PER_LISTING - photos.length
+    const remaining = MAX_PHOTOS - photos.length
     const files = accepted.slice(0, remaining)
 
     if (files.length === 0) {
-      toast.error(`Maximum ${MAX_PHOTOS_PER_LISTING} photos allowed`)
+      toast.error(`Maximum ${MAX_PHOTOS} photos allowed`)
       return
     }
 
@@ -89,9 +91,9 @@ export function PhotoUploader({ listingId, initialPhotos = [] }: PhotoUploaderPr
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
-    accept: { "image/jpeg": [], "image/png": [], "image/webp": [] },
+    accept: ACCEPTED_TYPES,
     maxSize: MAX_PHOTO_SIZE,
-    disabled: uploading || photos.length >= MAX_PHOTOS_PER_LISTING,
+    disabled: uploading || photos.length >= MAX_PHOTOS,
   })
 
   async function handleDelete(photo: Photo) {
@@ -129,7 +131,7 @@ export function PhotoUploader({ listingId, initialPhotos = [] }: PhotoUploaderPr
         className={cn(
           "border-2 border-dashed rounded-2xl p-8 text-center cursor-pointer transition-colors",
           isDragActive ? "border-teal-500 bg-teal-50" : "border-stone-300 hover:border-teal-400 hover:bg-stone-50",
-          (uploading || photos.length >= MAX_PHOTOS_PER_LISTING) && "opacity-50 cursor-not-allowed"
+          (uploading || photos.length >= MAX_PHOTOS) && "opacity-50 cursor-not-allowed"
         )}
       >
         <input {...getInputProps()} />
@@ -148,7 +150,7 @@ export function PhotoUploader({ listingId, initialPhotos = [] }: PhotoUploaderPr
             </p>
           </div>
           <p className="text-xs text-stone-400">
-            {photos.length}/{MAX_PHOTOS_PER_LISTING} photos uploaded
+            {photos.length}/{MAX_PHOTOS} photos uploaded
           </p>
         </div>
       </div>
