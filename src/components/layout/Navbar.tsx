@@ -18,13 +18,13 @@ export function Navbar() {
     <header className="sticky top-0 z-50 w-full border-b border-gray-200 bg-white/95 backdrop-blur-sm">
       <div className="container mx-auto px-4 h-20 flex items-center justify-between gap-4">
         {/* Logo */}
-        <Link href="/" className="flex items-center shrink-0">
+        <Link href="/" className="flex items-center shrink-0 overflow-hidden h-20">
           <Image
             src="/images/logo.png"
             alt="SpaceLink"
             width={220}
             height={80}
-            className="h-20 w-auto border-2 border-red-500 rounded"
+            className="h-28 w-auto scale-125 border-2 border-red-500 rounded"
             priority
           />
         </Link>
