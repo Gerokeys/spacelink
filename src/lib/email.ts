@@ -1,8 +1,14 @@
 import { Resend } from "resend"
 
-const resend = new Resend(process.env.RESEND_API_KEY)
 const FROM = process.env.EMAIL_FROM ?? "SpaceLink <noreply@spacelink.co.ke>"
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000"
+
+// Lazy-initialize so a missing key doesn't crash the build
+function getResend() {
+  const key = process.env.RESEND_API_KEY
+  if (!key || key === "re_xxxx") return null
+  return new Resend(key)
+}
 
 export async function sendInquiryNotification({
   landlordEmail,
@@ -25,6 +31,9 @@ export async function sendInquiryNotification({
   message: string
   moveInDate?: string
 }) {
+  const resend = getResend()
+  if (!resend) return
+
   await resend.emails.send({
     from: FROM,
     to: landlordEmail,
@@ -34,7 +43,6 @@ export async function sendInquiryNotification({
         <h2 style="color: #1a1a2e;">New Inquiry Received</h2>
         <p>Hello ${landlordName},</p>
         <p>You have a new inquiry for your listing: <strong>${listingTitle}</strong></p>
-
         <div style="background: #f5f5f5; padding: 16px; border-radius: 8px; margin: 16px 0;">
           <p><strong>From:</strong> ${tenantName}</p>
           <p><strong>Email:</strong> ${tenantEmail}</p>
@@ -43,15 +51,13 @@ export async function sendInquiryNotification({
           <p><strong>Message:</strong></p>
           <p style="white-space: pre-wrap;">${message}</p>
         </div>
-
         <a href="${APP_URL}/dashboard/landlord/inquiries"
-           style="display: inline-block; background: #6366f1; color: white; padding: 12px 24px;
+           style="display: inline-block; background: #4f46e5; color: white; padding: 12px 24px;
                   border-radius: 6px; text-decoration: none; margin-top: 8px;">
           View in Dashboard
         </a>
-
         <p style="color: #999; font-size: 12px; margin-top: 24px;">
-          SpaceLink · Nairobi, Kenya · <a href="${APP_URL}">spacelink.co.ke</a>
+          SpaceLink · Nairobi, Kenya
         </p>
       </div>
     `,
@@ -69,6 +75,9 @@ export async function sendInquiryConfirmation({
   listingTitle: string
   listingId: string
 }) {
+  const resend = getResend()
+  if (!resend) return
+
   await resend.emails.send({
     from: FROM,
     to: tenantEmail,
@@ -79,13 +88,11 @@ export async function sendInquiryConfirmation({
         <p>Hi ${tenantName},</p>
         <p>Your inquiry for <strong>${listingTitle}</strong> has been sent to the landlord.
            They'll get back to you soon.</p>
-
         <a href="${APP_URL}/listings/${listingId}"
-           style="display: inline-block; background: #6366f1; color: white; padding: 12px 24px;
+           style="display: inline-block; background: #4f46e5; color: white; padding: 12px 24px;
                   border-radius: 6px; text-decoration: none; margin-top: 8px;">
           View Listing
         </a>
-
         <p style="color: #999; font-size: 12px; margin-top: 24px;">
           SpaceLink · <a href="${APP_URL}">spacelink.co.ke</a>
         </p>
@@ -105,22 +112,23 @@ export async function sendListingApproved({
   listingTitle: string
   listingId: string
 }) {
+  const resend = getResend()
+  if (!resend) return
+
   await resend.emails.send({
     from: FROM,
     to: ownerEmail,
     subject: `Your listing is live — SpaceLink`,
     html: `
       <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto;">
-        <h2 style="color: #1a1a2e;">🎉 Your listing is live!</h2>
+        <h2 style="color: #1a1a2e;">Your listing is live!</h2>
         <p>Hi ${ownerName},</p>
         <p><strong>${listingTitle}</strong> has been approved and is now live on SpaceLink.</p>
-
         <a href="${APP_URL}/listings/${listingId}"
-           style="display: inline-block; background: #6366f1; color: white; padding: 12px 24px;
+           style="display: inline-block; background: #4f46e5; color: white; padding: 12px 24px;
                   border-radius: 6px; text-decoration: none; margin-top: 8px;">
           View Your Listing
         </a>
-
         <p style="color: #999; font-size: 12px; margin-top: 24px;">
           SpaceLink · <a href="${APP_URL}">spacelink.co.ke</a>
         </p>
