@@ -22,9 +22,9 @@ export function Navbar() {
           <Image
             src="/images/logo.png"
             alt="SpaceLink"
-            width={140}
-            height={48}
-            className="h-11 w-auto"
+            width={180}
+            height={56}
+            className="h-14 w-auto"
             priority
           />
         </Link>
