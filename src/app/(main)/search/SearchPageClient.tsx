@@ -106,7 +106,7 @@ export function SearchPageClient() {
               onClick={() => setViewMode("list")}
               className={cn(
                 "flex items-center gap-1.5 px-3 py-1.5 text-sm transition-colors",
-                viewMode === "list" ? "bg-indigo-600 text-white" : "text-gray-600 hover:bg-gray-50"
+                viewMode === "list" ? "bg-teal-600 text-white" : "text-gray-600 hover:bg-gray-50"
               )}
             >
               <LayoutList className="w-4 h-4" /> List
@@ -115,7 +115,7 @@ export function SearchPageClient() {
               onClick={() => setViewMode("map")}
               className={cn(
                 "flex items-center gap-1.5 px-3 py-1.5 text-sm transition-colors border-l border-gray-200",
-                viewMode === "map" ? "bg-indigo-600 text-white" : "text-gray-600 hover:bg-gray-50"
+                viewMode === "map" ? "bg-teal-600 text-white" : "text-gray-600 hover:bg-gray-50"
               )}
             >
               <Map className="w-4 h-4" /> Map

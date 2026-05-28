@@ -120,7 +120,7 @@ export default async function ListingDetailPage({ params }: Props) {
               <Badge variant="secondary">{LISTING_TYPE_LABELS[listing.type]}</Badge>
               {listing.isFeatured && <Badge variant="warning">Featured</Badge>}
               {hasVirtualTour && (
-                <Badge variant="default" className="bg-indigo-100 text-indigo-700">360° Tour</Badge>
+                <Badge variant="default" className="bg-teal-100 text-teal-700">360° Tour</Badge>
               )}
             </div>
             <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">{listing.title}</h1>
@@ -134,28 +134,28 @@ export default async function ListingDetailPage({ params }: Props) {
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 py-6 border-y border-gray-100">
             {listing.bedrooms !== null && (
               <div className="flex flex-col items-center gap-1">
-                <Bed className="w-5 h-5 text-indigo-500" />
+                <Bed className="w-5 h-5 text-teal-500" />
                 <span className="font-semibold text-gray-800">{bedroomLabel(listing.bedrooms)}</span>
                 <span className="text-xs text-gray-400">Bedrooms</span>
               </div>
             )}
             {listing.bathrooms !== null && (
               <div className="flex flex-col items-center gap-1">
-                <Bath className="w-5 h-5 text-indigo-500" />
+                <Bath className="w-5 h-5 text-teal-500" />
                 <span className="font-semibold text-gray-800">{listing.bathrooms}</span>
                 <span className="text-xs text-gray-400">Bathrooms</span>
               </div>
             )}
             {listing.sizeSqft && (
               <div className="flex flex-col items-center gap-1">
-                <Maximize className="w-5 h-5 text-indigo-500" />
+                <Maximize className="w-5 h-5 text-teal-500" />
                 <span className="font-semibold text-gray-800">{sizeLabelSqft(listing.sizeSqft)}</span>
                 <span className="text-xs text-gray-400">Size</span>
               </div>
             )}
             {listing.parkingSpots !== null && listing.parkingSpots > 0 && (
               <div className="flex flex-col items-center gap-1">
-                <Car className="w-5 h-5 text-indigo-500" />
+                <Car className="w-5 h-5 text-teal-500" />
                 <span className="font-semibold text-gray-800">{listing.parkingSpots}</span>
                 <span className="text-xs text-gray-400">Parking</span>
               </div>
@@ -235,7 +235,7 @@ export default async function ListingDetailPage({ params }: Props) {
           <div className="border border-gray-200 rounded-xl p-5">
             <h2 className="text-lg font-semibold text-gray-900 mb-4">About the landlord</h2>
             <div className="flex items-start gap-4">
-              <div className="w-14 h-14 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-700 font-bold text-lg shrink-0">
+              <div className="w-14 h-14 rounded-full bg-teal-100 flex items-center justify-center text-teal-700 font-bold text-lg shrink-0">
                 {listing.owner.name?.[0] ?? "?"}
               </div>
               <div className="flex-1 min-w-0">
@@ -292,10 +292,10 @@ export default async function ListingDetailPage({ params }: Props) {
 
             {/* Virtual tour */}
             {hasVirtualTour && (
-              <div className="border border-indigo-200 bg-indigo-50 rounded-xl p-5 text-center">
+              <div className="border border-teal-200 bg-teal-50 rounded-xl p-5 text-center">
                 <div className="text-4xl mb-2">360°</div>
-                <p className="font-semibold text-indigo-900 mb-1">Virtual Tour Available</p>
-                <p className="text-xs text-indigo-600 mb-3">Explore all rooms before visiting</p>
+                <p className="font-semibold text-teal-900 mb-1">Virtual Tour Available</p>
+                <p className="text-xs text-teal-600 mb-3">Explore all rooms before visiting</p>
                 <Button variant="default" className="w-full" size="sm">
                   Launch Virtual Tour
                 </Button>

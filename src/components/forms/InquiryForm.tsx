@@ -62,7 +62,7 @@ export function InquiryForm({ listingId, listingTitle }: InquiryFormProps) {
         <p className="text-sm text-gray-500">The landlord will reach out to you soon.</p>
         <button
           onClick={() => setSubmitted(false)}
-          className="mt-4 text-sm text-indigo-600 hover:underline"
+          className="mt-4 text-sm text-teal-600 hover:underline"
         >
           Send another inquiry
         </button>
@@ -103,7 +103,7 @@ export function InquiryForm({ listingId, listingTitle }: InquiryFormProps) {
           {...register("moveInDate")}
           type="date"
           min={new Date().toISOString().split("T")[0]}
-          className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
         />
       </div>
 
@@ -112,7 +112,7 @@ export function InquiryForm({ listingId, listingTitle }: InquiryFormProps) {
         <textarea
           {...register("message")}
           rows={4}
-          className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none"
+          className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 resize-none"
           placeholder="Tell the landlord about yourself and your requirements..."
         />
         {errors.message && (

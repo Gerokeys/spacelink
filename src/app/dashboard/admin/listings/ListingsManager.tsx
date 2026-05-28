@@ -92,13 +92,13 @@ export function ListingsManager({ listings: initial, activeStatus }: Props) {
               href={`/dashboard/admin/listings?status=${value}`}
               className={`px-4 py-2.5 text-sm font-medium border-b-2 transition-colors -mb-px ${
                 activeStatus === value
-                  ? "border-indigo-600 text-indigo-600"
+                  ? "border-teal-600 text-teal-600"
                   : "border-transparent text-gray-500 hover:text-gray-700"
               }`}
             >
               {label}
               {count > 0 && (
-                <span className={`ml-1.5 text-xs px-1.5 py-0.5 rounded-full ${activeStatus === value ? "bg-indigo-100 text-indigo-700" : "bg-gray-100 text-gray-500"}`}>
+                <span className={`ml-1.5 text-xs px-1.5 py-0.5 rounded-full ${activeStatus === value ? "bg-teal-100 text-teal-700" : "bg-gray-100 text-gray-500"}`}>
                   {count}
                 </span>
               )}
@@ -226,7 +226,7 @@ export function ListingsManager({ listings: initial, activeStatus }: Props) {
               onChange={(e) => setRejectReason(e.target.value)}
               rows={3}
               placeholder="e.g. Incomplete description, missing photos, address unclear..."
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none mb-4"
+              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 resize-none mb-4"
             />
             <div className="flex gap-3 justify-end">
               <Button variant="outline" onClick={() => { setRejectModal(null); setRejectReason("") }}>

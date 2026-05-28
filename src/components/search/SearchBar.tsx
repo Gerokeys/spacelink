@@ -47,7 +47,7 @@ export function SearchBar({ className, defaultType = "ALL", defaultQuery = "" }:
             className={cn(
               "px-4 py-1.5 rounded-full text-sm font-medium whitespace-nowrap transition-colors shrink-0",
               selectedType === value
-                ? "bg-indigo-600 text-white"
+                ? "bg-teal-600 text-white"
                 : "bg-white/80 text-gray-700 hover:bg-white border border-gray-200"
             )}
           >
@@ -65,7 +65,7 @@ export function SearchBar({ className, defaultType = "ALL", defaultQuery = "" }:
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search by location, neighbourhood, city…"
-            className="w-full h-12 pl-10 pr-4 rounded-xl border border-gray-200 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 shadow-sm"
+            className="w-full h-12 pl-10 pr-4 rounded-xl border border-gray-200 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 shadow-sm"
           />
         </div>
         <Button type="submit" size="lg" className="h-12 px-6 rounded-xl shadow-sm">

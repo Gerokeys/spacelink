@@ -97,7 +97,7 @@ export default async function HomePage() {
 
         <div className="relative w-full container mx-auto px-4 py-20">
           <div className="max-w-2xl mx-auto text-center">
-            <p className="text-indigo-300 text-sm font-medium tracking-widest uppercase mb-4">
+            <p className="text-teal-300 text-sm font-medium tracking-widest uppercase mb-4">
               Kenya's property platform
             </p>
             <h1 className="text-4xl md:text-6xl font-bold text-white leading-tight mb-5">
@@ -113,13 +113,13 @@ export default async function HomePage() {
 
             <div className="flex items-center justify-center gap-6 mt-6 text-sm text-slate-400 flex-wrap">
               <span className="flex items-center gap-1.5">
-                <Shield className="w-3.5 h-3.5 text-indigo-400" /> Verified landlords
+                <Shield className="w-3.5 h-3.5 text-teal-400" /> Verified landlords
               </span>
               <span className="flex items-center gap-1.5">
-                <Zap className="w-3.5 h-3.5 text-indigo-400" /> Virtual tours
+                <Zap className="w-3.5 h-3.5 text-teal-400" /> Virtual tours
               </span>
               <span className="flex items-center gap-1.5">
-                <MapPin className="w-3.5 h-3.5 text-indigo-400" /> Nairobi · Mombasa · Kisumu
+                <MapPin className="w-3.5 h-3.5 text-teal-400" /> Nairobi · Mombasa · Kisumu
               </span>
             </div>
           </div>
@@ -134,7 +134,7 @@ export default async function HomePage() {
               <Link
                 key={label}
                 href={href}
-                className="flex flex-col items-center gap-1.5 px-8 py-4 text-sm font-medium text-slate-500 hover:text-indigo-600 border-b-2 border-transparent hover:border-indigo-600 transition-colors whitespace-nowrap shrink-0"
+                className="flex flex-col items-center gap-1.5 px-8 py-4 text-sm font-medium text-slate-500 hover:text-teal-600 border-b-2 border-transparent hover:border-teal-600 transition-colors whitespace-nowrap shrink-0"
               >
                 <Icon className="w-5 h-5" />
                 {label}
@@ -155,7 +155,7 @@ export default async function HomePage() {
           </div>
           <Link
             href="/search"
-            className="text-sm text-indigo-600 hover:text-indigo-700 font-medium flex items-center gap-1"
+            className="text-sm text-teal-600 hover:text-teal-700 font-medium flex items-center gap-1"
           >
             View all <ArrowRight className="w-3.5 h-3.5" />
           </Link>
@@ -186,7 +186,7 @@ export default async function HomePage() {
             <h2 className="text-2xl font-bold text-slate-900">Browse by neighbourhood</h2>
             <Link
               href="/search?city=Nairobi"
-              className="text-sm text-indigo-600 hover:text-indigo-700 font-medium flex items-center gap-1"
+              className="text-sm text-teal-600 hover:text-teal-700 font-medium flex items-center gap-1"
             >
               All areas <ArrowRight className="w-3.5 h-3.5" />
             </Link>
@@ -196,7 +196,7 @@ export default async function HomePage() {
               <Link
                 key={area.slug}
                 href={`/search?neighbourhood=${area.slug}`}
-                className="flex items-center gap-1.5 px-4 py-2 rounded-full border border-slate-200 bg-white text-sm text-slate-700 hover:border-indigo-400 hover:text-indigo-600 transition-colors"
+                className="flex items-center gap-1.5 px-4 py-2 rounded-full border border-slate-200 bg-white text-sm text-slate-700 hover:border-teal-400 hover:text-teal-600 transition-colors"
               >
                 <MapPin className="w-3.5 h-3.5" />
                 {area.name}
@@ -259,7 +259,7 @@ export default async function HomePage() {
             </div>
             <div className="flex gap-3 shrink-0">
               <Link href="/dashboard/landlord/listings/new">
-                <Button size="lg" className="bg-indigo-600 hover:bg-indigo-500">
+                <Button size="lg" className="bg-teal-600 hover:bg-teal-500">
                   List your space
                 </Button>
               </Link>

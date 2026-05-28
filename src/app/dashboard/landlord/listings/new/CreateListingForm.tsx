@@ -126,8 +126,8 @@ export function CreateListingForm({ amenities }: { amenities: Amenity[] }) {
               onClick={() => i < step && setStep(i)}
               className={cn(
                 "flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-colors",
-                i === step ? "bg-indigo-600 text-white" :
-                i < step ? "bg-indigo-100 text-indigo-700 cursor-pointer hover:bg-indigo-200" :
+                i === step ? "bg-teal-600 text-white" :
+                i < step ? "bg-teal-100 text-teal-700 cursor-pointer hover:bg-teal-200" :
                 "bg-gray-100 text-gray-400 cursor-not-allowed"
               )}
             >
@@ -158,7 +158,7 @@ export function CreateListingForm({ amenities }: { amenities: Amenity[] }) {
                   className={cn(
                     "p-5 rounded-xl border-2 text-left transition-colors",
                     watchedType === type
-                      ? "border-indigo-500 bg-indigo-50"
+                      ? "border-teal-500 bg-teal-50"
                       : "border-gray-200 hover:border-gray-300"
                   )}
                 >
@@ -185,7 +185,7 @@ export function CreateListingForm({ amenities }: { amenities: Amenity[] }) {
               <label className="block text-sm font-medium text-gray-700 mb-1">City</label>
               <select
                 {...register("city")}
-                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
               >
                 {KENYA_CITIES.map((c) => <option key={c} value={c}>{c}</option>)}
               </select>
@@ -195,7 +195,7 @@ export function CreateListingForm({ amenities }: { amenities: Amenity[] }) {
                 <label className="block text-sm font-medium text-gray-700 mb-1">Neighbourhood (optional)</label>
                 <select
                   {...register("neighbourhood")}
-                  className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
                 >
                   <option value="">Select neighbourhood</option>
                   {NAIROBI_NEIGHBOURHOODS.map((n) => <option key={n} value={n}>{n}</option>)}
@@ -227,7 +227,7 @@ export function CreateListingForm({ amenities }: { amenities: Amenity[] }) {
                 {...register("description")}
                 rows={5}
                 placeholder="Describe the property in detail — layout, building, surroundings, nearby amenities..."
-                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none"
+                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 resize-none"
               />
               {errors.description && (
                 <p className="mt-1 text-xs text-red-600">{errors.description.message}</p>
@@ -273,11 +273,11 @@ export function CreateListingForm({ amenities }: { amenities: Amenity[] }) {
             </div>
             <div className="flex gap-6">
               <label className="flex items-center gap-2 cursor-pointer">
-                <input type="checkbox" {...register("furnished")} className="w-4 h-4 rounded text-indigo-600" />
+                <input type="checkbox" {...register("furnished")} className="w-4 h-4 rounded text-teal-600" />
                 <span className="text-sm text-gray-700">Furnished</span>
               </label>
               <label className="flex items-center gap-2 cursor-pointer">
-                <input type="checkbox" {...register("petsAllowed")} className="w-4 h-4 rounded text-indigo-600" />
+                <input type="checkbox" {...register("petsAllowed")} className="w-4 h-4 rounded text-teal-600" />
                 <span className="text-sm text-gray-700">Pets allowed</span>
               </label>
             </div>
@@ -300,7 +300,7 @@ export function CreateListingForm({ amenities }: { amenities: Amenity[] }) {
                 <label className="block text-sm font-medium text-gray-700 mb-1">Per</label>
                 <select
                   {...register("pricePeriod")}
-                  className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
                 >
                   <option value="MONTHLY">Month</option>
                   <option value="YEARLY">Year</option>
@@ -318,7 +318,7 @@ export function CreateListingForm({ amenities }: { amenities: Amenity[] }) {
                 <label className="block text-sm font-medium text-gray-700 mb-1">Deposit months</label>
                 <select
                   {...register("depositMonths", {})}
-                  className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
                 >
                   {[1, 2, 3, 6].map((n) => <option key={n} value={n}>{n} month{n > 1 ? "s" : ""}</option>)}
                 </select>
@@ -327,7 +327,7 @@ export function CreateListingForm({ amenities }: { amenities: Amenity[] }) {
                 <label className="block text-sm font-medium text-gray-700 mb-1">Minimum lease</label>
                 <select
                   {...register("minLeaseMonths", {})}
-                  className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
                 >
                   {[1, 3, 6, 12, 24].map((n) => <option key={n} value={n}>{n} month{n > 1 ? "s" : ""}</option>)}
                 </select>
@@ -338,7 +338,7 @@ export function CreateListingForm({ amenities }: { amenities: Amenity[] }) {
                   {...register("availableFrom")}
                   type="date"
                   min={new Date().toISOString().split("T")[0]}
-                  className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
                 />
               </div>
             </div>
@@ -363,7 +363,7 @@ export function CreateListingForm({ amenities }: { amenities: Amenity[] }) {
                         onClick={() => toggleAmenity(amenity.id)}
                         className={cn(
                           "px-3 py-1.5 rounded-full text-sm border transition-colors",
-                          selected ? "bg-indigo-600 text-white border-indigo-600" : "border-gray-300 text-gray-600 hover:border-gray-400"
+                          selected ? "bg-teal-600 text-white border-teal-600" : "border-gray-300 text-gray-600 hover:border-gray-400"
                         )}
                       >
                         {amenity.name}

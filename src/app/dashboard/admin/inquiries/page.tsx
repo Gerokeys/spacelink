@@ -89,7 +89,7 @@ export default async function AdminInquiriesPage() {
                   <Link
                     href={`/listings/${inquiry.listingId}`}
                     target="_blank"
-                    className="text-indigo-600 hover:text-indigo-700 text-xs font-medium"
+                    className="text-teal-600 hover:text-teal-700 text-xs font-medium"
                   >
                     View listing →
                   </Link>

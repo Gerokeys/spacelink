@@ -59,7 +59,7 @@ export function SearchFiltersPanel({ filters, onChange, resultCount }: SearchFil
               className={cn(
                 "px-3 py-1.5 rounded-full text-sm border transition-colors",
                 filters.type === t
-                  ? "bg-indigo-600 text-white border-indigo-600"
+                  ? "bg-teal-600 text-white border-teal-600"
                   : "border-gray-300 text-gray-600 hover:border-gray-400"
               )}
             >
@@ -80,7 +80,7 @@ export function SearchFiltersPanel({ filters, onChange, resultCount }: SearchFil
               className={cn(
                 "px-3 py-1.5 rounded-full text-sm border transition-colors",
                 filters.minPrice === min && filters.maxPrice === max
-                  ? "bg-indigo-600 text-white border-indigo-600"
+                  ? "bg-teal-600 text-white border-teal-600"
                   : "border-gray-300 text-gray-600 hover:border-gray-400"
               )}
             >
@@ -101,7 +101,7 @@ export function SearchFiltersPanel({ filters, onChange, resultCount }: SearchFil
               className={cn(
                 "flex-1 py-1.5 rounded-lg text-sm border transition-colors text-center",
                 filters.minBedrooms === value
-                  ? "bg-indigo-600 text-white border-indigo-600"
+                  ? "bg-teal-600 text-white border-teal-600"
                   : "border-gray-300 text-gray-600 hover:border-gray-400"
               )}
             >
@@ -117,7 +117,7 @@ export function SearchFiltersPanel({ filters, onChange, resultCount }: SearchFil
         <select
           value={filters.city ?? ""}
           onChange={(e) => update({ city: e.target.value || undefined, neighbourhood: undefined })}
-          className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
         >
           <option value="">All cities</option>
           {KENYA_CITIES.map((c) => (
@@ -133,7 +133,7 @@ export function SearchFiltersPanel({ filters, onChange, resultCount }: SearchFil
           <select
             value={filters.neighbourhood ?? ""}
             onChange={(e) => update({ neighbourhood: e.target.value || undefined })}
-            className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
           >
             <option value="">All neighbourhoods</option>
             {NAIROBI_NEIGHBOURHOODS.map((n) => (
@@ -157,7 +157,7 @@ export function SearchFiltersPanel({ filters, onChange, resultCount }: SearchFil
                 type="checkbox"
                 checked={!!filters[key]}
                 onChange={(e) => update({ [key]: e.target.checked || undefined })}
-                className="w-4 h-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                className="w-4 h-4 rounded border-gray-300 text-teal-600 focus:ring-teal-500"
               />
               <span className="text-sm text-gray-700">{label}</span>
             </label>
@@ -171,7 +171,7 @@ export function SearchFiltersPanel({ filters, onChange, resultCount }: SearchFil
         <select
           value={filters.sortBy ?? "newest"}
           onChange={(e) => update({ sortBy: e.target.value as SearchFilters["sortBy"] })}
-          className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
         >
           <option value="newest">Newest first</option>
           <option value="price_asc">Price: Low to High</option>
@@ -217,7 +217,7 @@ export function SearchFiltersPanel({ filters, onChange, resultCount }: SearchFil
           <SlidersHorizontal className="w-4 h-4" />
           Filters
           {activeFilterCount > 0 && (
-            <span className="bg-indigo-600 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">
+            <span className="bg-teal-600 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">
               {activeFilterCount}
             </span>
           )}

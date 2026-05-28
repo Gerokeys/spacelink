@@ -33,7 +33,7 @@ export default async function AdminOverviewPage() {
   const STAT_CARDS = [
     { label: "Pending Review", value: stats.pendingListings, icon: Clock, color: "text-amber-600", bg: "bg-amber-50", href: "/dashboard/admin/listings?status=PENDING" },
     { label: "Active Listings", value: stats.activeListings, icon: CheckCircle, color: "text-green-600", bg: "bg-green-50", href: "/dashboard/admin/listings?status=ACTIVE" },
-    { label: "Total Users", value: stats.totalUsers, icon: Users, color: "text-indigo-600", bg: "bg-indigo-50", href: "/dashboard/admin/users" },
+    { label: "Total Users", value: stats.totalUsers, icon: Users, color: "text-teal-600", bg: "bg-teal-50", href: "/dashboard/admin/users" },
     { label: "Total Inquiries", value: stats.totalInquiries, icon: MessageSquare, color: "text-violet-600", bg: "bg-violet-50", href: "/dashboard/admin/inquiries" },
   ]
 
@@ -64,7 +64,7 @@ export default async function AdminOverviewPage() {
             <AlertCircle className="w-4 h-4 text-amber-500" />
             Pending Review ({stats.pendingListings})
           </h2>
-          <Link href="/dashboard/admin/listings?status=PENDING" className="text-sm text-indigo-600 hover:text-indigo-700 font-medium">
+          <Link href="/dashboard/admin/listings?status=PENDING" className="text-sm text-teal-600 hover:text-teal-700 font-medium">
             View all →
           </Link>
         </div>
@@ -95,7 +95,7 @@ export default async function AdminOverviewPage() {
                   <td className="px-6 py-3 text-gray-900">{formatPrice(listing.price, listing.currency)}</td>
                   <td className="px-6 py-3 text-gray-400">{new Date(listing.createdAt).toLocaleDateString()}</td>
                   <td className="px-6 py-3">
-                    <Link href="/dashboard/admin/listings?status=PENDING" className="text-indigo-600 hover:text-indigo-700 font-medium text-xs">
+                    <Link href="/dashboard/admin/listings?status=PENDING" className="text-teal-600 hover:text-teal-700 font-medium text-xs">
                       Review →
                     </Link>
                   </td>

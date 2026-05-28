@@ -73,7 +73,7 @@ export default async function LandlordDashboardPage() {
         ].map(({ label, value, icon: Icon }) => (
           <div key={label} className="bg-white border border-gray-200 rounded-xl p-4">
             <div className="flex items-center gap-2 mb-1">
-              <Icon className="w-4 h-4 text-indigo-500" />
+              <Icon className="w-4 h-4 text-teal-500" />
               <span className="text-xs text-gray-400">{label}</span>
             </div>
             <p className="text-2xl font-bold text-gray-900">{value.toLocaleString()}</p>
@@ -146,7 +146,7 @@ export default async function LandlordDashboardPage() {
           <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
             <div className="px-5 py-4 border-b border-gray-100 flex items-center justify-between">
               <h2 className="font-semibold text-gray-900">Recent Inquiries</h2>
-              <Link href="/dashboard/landlord/inquiries" className="text-xs text-indigo-600 hover:underline">
+              <Link href="/dashboard/landlord/inquiries" className="text-xs text-teal-600 hover:underline">
                 View all
               </Link>
             </div>
