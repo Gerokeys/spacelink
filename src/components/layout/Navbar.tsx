@@ -1,9 +1,10 @@
 "use client"
 
 import Link from "next/link"
+import Image from "next/image"
 import { useSession, signOut } from "next-auth/react"
 import { useState } from "react"
-import { Menu, X, Home, Search, Heart, LayoutDashboard, Plus } from "lucide-react"
+import { Menu, X, Search, Heart, LayoutDashboard, Plus } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 
@@ -17,11 +18,15 @@ export function Navbar() {
     <header className="sticky top-0 z-50 w-full border-b border-gray-200 bg-white/95 backdrop-blur-sm">
       <div className="container mx-auto px-4 h-16 flex items-center justify-between gap-4">
         {/* Logo */}
-        <Link href="/" className="flex items-center gap-2 shrink-0">
-          <div className="w-8 h-8 rounded-lg bg-teal-600 flex items-center justify-center">
-            <Home className="w-4 h-4 text-white" />
-          </div>
-          <span className="font-bold text-lg text-gray-900">SpaceLink</span>
+        <Link href="/" className="flex items-center shrink-0">
+          <Image
+            src="/images/logo.png"
+            alt="SpaceLink"
+            width={130}
+            height={44}
+            className="h-10 w-auto"
+            priority
+          />
         </Link>
 
         {/* Desktop nav */}
