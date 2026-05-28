@@ -1,0 +1,363 @@
+// SpaceLink — Prisma Schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// ─── ENUMS ────────────────────────────────────────────────────────────────────
+
+enum UserRole {
+  TENANT
+  LANDLORD
+  AGENT
+  ADMIN
+  SUPER_ADMIN
+}
+
+enum ListingType {
+  RESIDENTIAL
+  OFFICE
+  COMMERCIAL
+  SHORT_TERM
+}
+
+enum ListingStatus {
+  DRAFT
+  PENDING
+  ACTIVE
+  PAUSED
+  ARCHIVED
+  REJECTED
+}
+
+enum PricePeriod {
+  NIGHTLY
+  WEEKLY
+  MONTHLY
+  YEARLY
+}
+
+enum MediaType {
+  PHOTO
+  VIDEO
+  TOUR_360
+  FLOOR_PLAN
+}
+
+enum InquiryStatus {
+  PENDING
+  RESPONDED
+  CLOSED
+  ARCHIVED
+}
+
+enum VerificationStatus {
+  UNVERIFIED
+  PENDING
+  VERIFIED
+  REJECTED
+}
+
+// ─── AUTH ─────────────────────────────────────────────────────────────────────
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+// ─── USERS ────────────────────────────────────────────────────────────────────
+
+model User {
+  id            String    @id @default(cuid())
+  email         String?   @unique
+  emailVerified DateTime?
+  phone         String?   @unique
+  phoneVerified DateTime?
+  name          String?
+  image         String?
+  role          UserRole  @default(TENANT)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  accounts        Account[]
+  sessions        Session[]
+  profile         UserProfile?
+  listings        Listing[]
+  inquiries       Inquiry[]      @relation("TenantInquiries")
+  savedListings   SavedListing[]
+  savedSearches   SavedSearch[]
+  reviewsGiven    Review[]       @relation("ReviewsGiven")
+  reviewsReceived Review[]       @relation("ReviewsReceived")
+  notifications   Notification[]
+
+  @@index([email])
+  @@index([phone])
+  @@index([role])
+}
+
+model UserProfile {
+  id                   String             @id @default(cuid())
+  userId               String             @unique
+  bio                  String?
+  company              String?
+  website              String?
+  city                 String?
+  country              String             @default("KE")
+  idVerificationStatus VerificationStatus @default(UNVERIFIED)
+  idDocumentUrl        String?
+  idVerifiedAt         DateTime?
+  responseRate         Float?
+  responseTimeHours    Int?
+  createdAt            DateTime           @default(now())
+  updatedAt            DateTime           @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+// ─── LISTINGS ─────────────────────────────────────────────────────────────────
+
+model Listing {
+  id            String        @id @default(cuid())
+  ownerId       String
+  type          ListingType
+  status        ListingStatus @default(DRAFT)
+  title         String
+  description   String        @db.Text
+  price         Float
+  pricePeriod   PricePeriod   @default(MONTHLY)
+  currency      String        @default("KES")
+  deposit       Float?
+  depositMonths Int?          @default(1)
+  address       String
+  neighbourhood String?
+  city          String
+  county        String?
+  country       String        @default("KE")
+  lat           Float?
+  lng           Float?
+  sizeSqft      Float?
+  bedrooms      Int?
+  bathrooms     Int?
+  floor         Int?
+  totalFloors   Int?
+  yearBuilt     Int?
+  parkingSpots  Int?          @default(0)
+  availableFrom DateTime?
+  minLeaseMonths Int?         @default(6)
+  maxLeaseMonths Int?
+  petsAllowed   Boolean       @default(false)
+  furnished     Boolean       @default(false)
+  viewCount     Int           @default(0)
+  inquiryCount  Int           @default(0)
+  isFeatured    Boolean       @default(false)
+  featuredUntil DateTime?
+  rejectedReason String?
+  publishedAt   DateTime?
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  owner     User             @relation(fields: [ownerId], references: [id])
+  amenities ListingAmenity[]
+  media     ListingMedia[]
+  inquiries Inquiry[]
+  savedBy   SavedListing[]
+  reviews   Review[]
+  tourConfig TourConfig?
+
+  @@index([status])
+  @@index([type])
+  @@index([city])
+  @@index([ownerId])
+  @@index([lat, lng])
+  @@index([price])
+  @@index([isFeatured])
+}
+
+model Amenity {
+  id       String           @id @default(cuid())
+  name     String           @unique
+  icon     String
+  category String
+  listings ListingAmenity[]
+}
+
+model ListingAmenity {
+  listingId String
+  amenityId String
+  listing   Listing @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  amenity   Amenity @relation(fields: [amenityId], references: [id])
+
+  @@id([listingId, amenityId])
+}
+
+model ListingMedia {
+  id           String    @id @default(cuid())
+  listingId    String
+  type         MediaType @default(PHOTO)
+  url          String
+  cdnUrl       String?
+  thumbnailUrl String?
+  blurHash     String?
+  width        Int?
+  height       Int?
+  sizeBytes    Int?
+  order        Int       @default(0)
+  isPrimary    Boolean   @default(false)
+  caption      String?
+  createdAt    DateTime  @default(now())
+
+  listing Listing @relation(fields: [listingId], references: [id], onDelete: Cascade)
+
+  @@index([listingId])
+  @@index([type])
+}
+
+model TourConfig {
+  id        String      @id @default(cuid())
+  listingId String      @unique
+  config    Json
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+  listing   Listing     @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  scenes    TourScene[]
+}
+
+model TourScene {
+  id        String     @id @default(cuid())
+  tourId    String
+  sceneKey  String
+  label     String
+  imageUrl  String
+  cdnUrl    String?
+  order     Int        @default(0)
+  isDefault Boolean    @default(false)
+  tour      TourConfig @relation(fields: [tourId], references: [id], onDelete: Cascade)
+
+  @@unique([tourId, sceneKey])
+}
+
+// ─── INQUIRIES ────────────────────────────────────────────────────────────────
+
+model Inquiry {
+  id         String        @id @default(cuid())
+  listingId  String
+  tenantId   String
+  landlordId String
+  message    String        @db.Text
+  status     InquiryStatus @default(PENDING)
+  moveInDate DateTime?
+  createdAt  DateTime      @default(now())
+  updatedAt  DateTime      @updatedAt
+
+  listing Listing @relation(fields: [listingId], references: [id])
+  tenant  User    @relation("TenantInquiries", fields: [tenantId], references: [id])
+
+  @@index([listingId])
+  @@index([tenantId])
+  @@index([landlordId])
+  @@index([status])
+}
+
+// ─── SAVED ────────────────────────────────────────────────────────────────────
+
+model SavedListing {
+  userId    String
+  listingId String
+  createdAt DateTime @default(now())
+
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  listing Listing @relation(fields: [listingId], references: [id], onDelete: Cascade)
+
+  @@id([userId, listingId])
+  @@index([userId])
+}
+
+model SavedSearch {
+  id          String    @id @default(cuid())
+  userId      String
+  name        String?
+  filters     Json
+  notifyEmail Boolean   @default(true)
+  notifyPush  Boolean   @default(false)
+  lastRunAt   DateTime?
+  createdAt   DateTime  @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+// ─── REVIEWS ──────────────────────────────────────────────────────────────────
+
+model Review {
+  id         String   @id @default(cuid())
+  listingId  String?
+  reviewerId String
+  revieweeId String
+  rating     Int
+  title      String?
+  body       String   @db.Text
+  isVerified Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  listing  Listing? @relation(fields: [listingId], references: [id])
+  reviewer User     @relation("ReviewsGiven", fields: [reviewerId], references: [id])
+  reviewee User     @relation("ReviewsReceived", fields: [revieweeId], references: [id])
+
+  @@index([listingId])
+  @@index([revieweeId])
+}
+
+// ─── NOTIFICATIONS ────────────────────────────────────────────────────────────
+
+model Notification {
+  id        String    @id @default(cuid())
+  userId    String
+  type      String
+  title     String
+  body      String
+  data      Json?
+  readAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([readAt])
+}
