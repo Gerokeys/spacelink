@@ -35,7 +35,6 @@ export async function getPresignedUploadUrl(
     Bucket: BUCKET,
     Key: key,
     ContentType: contentType,
-    ContentLength: maxSizeBytes,
   })
 
   const uploadUrl = await getSignedUrl(r2, command, { expiresIn: 300 }) // 5 min

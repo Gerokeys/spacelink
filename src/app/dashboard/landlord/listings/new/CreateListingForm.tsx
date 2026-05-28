@@ -104,8 +104,8 @@ export function CreateListingForm({ amenities }: { amenities: Amenity[] }) {
       })
       const json = await res.json()
       if (!json.success) throw new Error(json.error)
-      toast.success("Listing submitted for review!")
-      router.push("/dashboard/landlord")
+      toast.success("Listing submitted! Now add some photos.")
+      router.push(`/dashboard/landlord/listings/${json.data.id}/photos`)
     } catch (err: unknown) {
       toast.error(err instanceof Error ? err.message : "Failed to create listing")
     } finally {
