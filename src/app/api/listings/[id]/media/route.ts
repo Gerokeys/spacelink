@@ -5,9 +5,7 @@ import { db } from "@/lib/db"
 import { z } from "zod"
 
 const createSchema = z.object({
-  key: z.string(),
   cdnUrl: z.string().url(),
-  url: z.string().optional(),
   isPrimary: z.boolean().default(false),
   order: z.number().int().default(0),
 })
@@ -41,28 +39,31 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     return NextResponse.json({ success: false, error: "Forbidden" }, { status: 403 })
   }
 
-  const body = await req.json()
-  const data = createSchema.parse(body)
+  try {
+    const body = await req.json()
+    const data = createSchema.parse(body)
 
-  // Count existing photos
-  const existing = await db.listingMedia.count({ where: { listingId: id } })
-  const isPrimary = existing === 0 ? true : data.isPrimary
+    const existing = await db.listingMedia.count({ where: { listingId: id } })
+    const isPrimary = existing === 0 ? true : data.isPrimary
 
-  // If setting as primary, unset all others
-  if (isPrimary) {
-    await db.listingMedia.updateMany({ where: { listingId: id }, data: { isPrimary: false } })
+    if (isPrimary) {
+      await db.listingMedia.updateMany({ where: { listingId: id }, data: { isPrimary: false } })
+    }
+
+    const media = await db.listingMedia.create({
+      data: {
+        listingId: id,
+        type: "PHOTO",
+        url: data.cdnUrl,
+        cdnUrl: data.cdnUrl,
+        isPrimary,
+        order: data.order,
+      },
+    })
+
+    return NextResponse.json({ success: true, data: media }, { status: 201 })
+  } catch (err) {
+    console.error("[media/POST]", err)
+    return NextResponse.json({ success: false, error: "Failed to save photo" }, { status: 500 })
   }
-
-  const media = await db.listingMedia.create({
-    data: {
-      listingId: id,
-      type: "PHOTO",
-      url: data.cdnUrl,
-      cdnUrl: data.cdnUrl,
-      isPrimary,
-      order: data.order,
-    },
-  })
-
-  return NextResponse.json({ success: true, data: media }, { status: 201 })
 }
