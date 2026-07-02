@@ -97,7 +97,7 @@ export default async function AdminInquiriesPage() {
               </tr>
             ))}
           </tbody>
-        </table>
+        </table></div>
         {inquiries.length === 0 && (
           <div className="py-16 text-center text-gray-400">
             <MessageSquare className="w-8 h-8 mx-auto mb-2 opacity-40" />

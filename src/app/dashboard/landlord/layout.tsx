@@ -1,3 +1,6 @@
+import { getServerSession } from "next-auth"
+import { redirect } from "next/navigation"
+import { authOptions } from "@/lib/auth"
 import { Navbar } from "@/components/layout/Navbar"
 import Link from "next/link"
 import { LayoutDashboard, List, MessageSquare, Settings } from "lucide-react"
@@ -9,7 +12,10 @@ const NAV = [
   { href: "/dashboard/landlord/settings", icon: Settings, label: "Settings" },
 ]
 
-export default function LandlordDashboardLayout({ children }: { children: React.ReactNode }) {
+export default async function LandlordDashboardLayout({ children }: { children: React.ReactNode }) {
+  const session = await getServerSession(authOptions)
+  if (!session) redirect("/login?callbackUrl=/dashboard/landlord")
+
   return (
     <>
       <Navbar />

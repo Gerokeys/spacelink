@@ -69,7 +69,11 @@ export default async function ListingPhotosPage({ params }: Props) {
         </div>
         <div className="min-w-0">
           <p className="font-medium text-stone-900 truncate">{listing.title}</p>
-          <p className="text-xs text-stone-400">{listing.city}{listing.neighbourhood ? ` · ${listing.neighbourhood}` : ""} · Submitted for review</p>
+          <p className="text-xs text-stone-400">
+            {listing.city}{listing.neighbourhood ? ` · ${listing.neighbourhood}` : ""}
+            {" · "}
+            {listing.status === "DRAFT" ? "Goes to review after 3 photos" : "Submitted for review"}
+          </p>
         </div>
       </div>
 

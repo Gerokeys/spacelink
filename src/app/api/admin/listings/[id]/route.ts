@@ -4,6 +4,7 @@ import { authOptions } from "@/lib/auth"
 import { db } from "@/lib/db"
 import { z } from "zod"
 import { checkRateLimit, getClientIp, tooManyRequests, LIMITS } from "@/lib/ratelimit"
+import { sendListingApproved } from "@/lib/email"
 
 const schema = z.object({
   action: z.enum(["approve", "reject"]),
@@ -38,6 +39,15 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
           : { status: "REJECTED", rejectedReason: reason ?? "Did not meet listing standards" },
       include: { owner: { select: { email: true, name: true } } },
     })
+
+    if (action === "approve" && listing.owner.email) {
+      sendListingApproved({
+        ownerEmail: listing.owner.email,
+        ownerName: listing.owner.name ?? "there",
+        listingTitle: listing.title,
+        listingId: listing.id,
+      }).catch(console.error)
+    }
 
     return NextResponse.json({ success: true, data: listing })
   } catch (err) {

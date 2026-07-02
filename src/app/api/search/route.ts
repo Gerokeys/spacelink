@@ -6,6 +6,13 @@ import { checkRateLimit, getClientIp, tooManyRequests, LIMITS } from "@/lib/rate
 
 const PAGE_SIZE = 24
 
+// Parses a query param as a finite number, or undefined for garbage input
+function toNum(value: string | null): number | undefined {
+  if (value === null || value.trim() === "") return undefined
+  const n = Number(value)
+  return Number.isFinite(n) ? n : undefined
+}
+
 export async function GET(req: NextRequest) {
   // Rate limit: 120 searches per IP per minute
   const ip = getClientIp(req)
@@ -14,8 +21,8 @@ export async function GET(req: NextRequest) {
 
   try {
     const sp = req.nextUrl.searchParams
-    const page = Math.max(1, Number(sp.get("page") ?? 1))
-    const limit = Math.min(PAGE_SIZE, Number(sp.get("limit") ?? PAGE_SIZE))
+    const page = Math.max(1, Math.floor(toNum(sp.get("page")) ?? 1))
+    const limit = Math.min(PAGE_SIZE, Math.max(1, Math.floor(toNum(sp.get("limit")) ?? PAGE_SIZE)))
     const skip = (page - 1) * limit
 
     const where: Prisma.ListingWhereInput = {
@@ -46,17 +53,17 @@ export async function GET(req: NextRequest) {
     if (neighbourhood) where.neighbourhood = { contains: neighbourhood, mode: "insensitive" }
 
     // Price filters
-    const minPrice = sp.get("minPrice")
-    const maxPrice = sp.get("maxPrice")
-    if (minPrice || maxPrice) {
+    const minPrice = toNum(sp.get("minPrice"))
+    const maxPrice = toNum(sp.get("maxPrice"))
+    if (minPrice !== undefined || maxPrice !== undefined) {
       where.price = {}
-      if (minPrice) where.price.gte = Number(minPrice)
-      if (maxPrice) where.price.lte = Number(maxPrice)
+      if (minPrice !== undefined) where.price.gte = minPrice
+      if (maxPrice !== undefined) where.price.lte = maxPrice
     }
 
     // Bedrooms
-    const minBedrooms = sp.get("minBedrooms")
-    if (minBedrooms !== null) where.bedrooms = { gte: Number(minBedrooms) }
+    const minBedrooms = toNum(sp.get("minBedrooms"))
+    if (minBedrooms !== undefined) where.bedrooms = { gte: minBedrooms }
 
     // Toggles
     if (sp.get("furnished") === "true") where.furnished = true

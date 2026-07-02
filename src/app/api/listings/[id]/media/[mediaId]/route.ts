@@ -3,6 +3,16 @@ import { getServerSession } from "next-auth"
 import { authOptions } from "@/lib/auth"
 import { db } from "@/lib/db"
 import { deleteMedia } from "@/lib/media"
+import type { Session } from "next-auth"
+import type { Listing } from "@prisma/client"
+
+function canManageListing(session: Session, listing: Listing): boolean {
+  return (
+    listing.ownerId === session.user.id ||
+    session.user.role === "ADMIN" ||
+    session.user.role === "SUPER_ADMIN"
+  )
+}
 
 export async function DELETE(
   req: NextRequest,
@@ -14,7 +24,7 @@ export async function DELETE(
   const { id, mediaId } = await params
 
   const listing = await db.listing.findUnique({ where: { id } })
-  if (!listing || listing.ownerId !== session.user.id) {
+  if (!listing || !canManageListing(session, listing)) {
     return NextResponse.json({ success: false, error: "Forbidden" }, { status: 403 })
   }
 
@@ -48,7 +58,7 @@ export async function PATCH(
   const { id, mediaId } = await params
 
   const listing = await db.listing.findUnique({ where: { id } })
-  if (!listing || listing.ownerId !== session.user.id) {
+  if (!listing || !canManageListing(session, listing)) {
     return NextResponse.json({ success: false, error: "Forbidden" }, { status: 403 })
   }
 

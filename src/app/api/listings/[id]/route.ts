@@ -2,6 +2,39 @@ import { NextRequest, NextResponse } from "next/server"
 import { getServerSession } from "next-auth"
 import { authOptions } from "@/lib/auth"
 import { db } from "@/lib/db"
+import { z } from "zod"
+
+// Only content fields are editable — never status, isFeatured, ownerId,
+// viewCount or publishedAt, which would bypass moderation
+const updateListingSchema = z.object({
+  type: z.enum(["RESIDENTIAL", "OFFICE", "COMMERCIAL", "SHORT_TERM"]).optional(),
+  title: z.string().min(10).max(120).optional(),
+  description: z.string().min(30).max(5000).optional(),
+  address: z.string().min(5).optional(),
+  neighbourhood: z.string().nullable().optional(),
+  city: z.string().min(2).optional(),
+  county: z.string().nullable().optional(),
+  lat: z.number().nullable().optional(),
+  lng: z.number().nullable().optional(),
+  price: z.number().positive().optional(),
+  pricePeriod: z.enum(["NIGHTLY", "WEEKLY", "MONTHLY", "YEARLY"]).optional(),
+  currency: z.string().optional(),
+  deposit: z.number().nullable().optional(),
+  depositMonths: z.number().int().min(0).max(12).nullable().optional(),
+  sizeSqft: z.number().positive().nullable().optional(),
+  bedrooms: z.number().int().min(0).nullable().optional(),
+  bathrooms: z.number().min(0).nullable().optional(),
+  floor: z.number().int().nullable().optional(),
+  totalFloors: z.number().int().nullable().optional(),
+  yearBuilt: z.number().int().min(1900).max(new Date().getFullYear()).nullable().optional(),
+  parkingSpots: z.number().int().min(0).optional(),
+  availableFrom: z.string().nullable().optional(),
+  minLeaseMonths: z.number().int().min(1).nullable().optional(),
+  petsAllowed: z.boolean().optional(),
+  furnished: z.boolean().optional(),
+  // Owners may only pause/unpause an already-approved listing
+  status: z.enum(["ACTIVE", "PAUSED"]).optional(),
+})
 
 export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
@@ -43,8 +76,6 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
     if (!listing || (listing.status !== "ACTIVE" && listing.status !== "PAUSED")) {
       return NextResponse.json({ success: false, error: "Listing not found" }, { status: 404 })
     }
-
-    db.listing.update({ where: { id }, data: { viewCount: { increment: 1 } } }).catch(() => {})
 
     const avgRating =
       listing.reviews.length > 0
@@ -94,9 +125,39 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
 
   if (!canEdit) return NextResponse.json({ success: false, error: "Forbidden" }, { status: 403 })
 
-  const body = await req.json()
-  const updated = await db.listing.update({ where: { id }, data: body })
-  return NextResponse.json({ success: true, data: updated })
+  try {
+    const body = await req.json()
+    const data = updateListingSchema.parse(body)
+
+    // Status can only be toggled between ACTIVE and PAUSED on an
+    // already-approved listing — never used to skip review
+    if (data.status && listing.status !== "ACTIVE" && listing.status !== "PAUSED") {
+      delete data.status
+    }
+
+    const updated = await db.listing.update({
+      where: { id },
+      data: {
+        ...data,
+        availableFrom:
+          data.availableFrom === undefined
+            ? undefined
+            : data.availableFrom === null
+              ? null
+              : new Date(data.availableFrom),
+      },
+    })
+    return NextResponse.json({ success: true, data: updated })
+  } catch (err) {
+    if (err instanceof z.ZodError) {
+      return NextResponse.json(
+        { success: false, error: "Validation failed", details: err.flatten().fieldErrors },
+        { status: 422 }
+      )
+    }
+    console.error("[listings/PATCH]", err)
+    return NextResponse.json({ success: false, error: "Failed to update listing" }, { status: 500 })
+  }
 }
 
 export async function DELETE(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {

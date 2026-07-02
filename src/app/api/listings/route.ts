@@ -53,7 +53,9 @@ export async function POST(req: NextRequest) {
       data: {
         ownerId: session.user.id,
         type: data.type,
-        status: "PENDING",
+        // Starts as DRAFT; promoted to PENDING (review queue) once the
+        // listing has the minimum number of photos — see media POST route
+        status: "DRAFT",
         title: data.title,
         description: data.description,
         address: data.address,

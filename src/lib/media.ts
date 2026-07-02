@@ -26,15 +26,23 @@ export function getCdnUrl(key: string): string {
   return `${PUBLIC_URL}/${key}`
 }
 
+// True only for URLs pointing at our own R2 public bucket
+export function isOwnedCdnUrl(url: string): boolean {
+  return url.startsWith(`${PUBLIC_URL}/`)
+}
+
 export async function getPresignedUploadUrl(
   key: string,
   contentType: string,
-  maxSizeBytes: number = 20 * 1024 * 1024 // 20MB default
+  contentLength: number
 ): Promise<{ uploadUrl: string; cdnUrl: string }> {
+  // ContentLength is part of the signature, so an upload larger or smaller
+  // than the declared size fails signature validation at R2
   const command = new PutObjectCommand({
     Bucket: BUCKET,
     Key: key,
     ContentType: contentType,
+    ContentLength: contentLength,
   })
 
   const uploadUrl = await getSignedUrl(r2, command, { expiresIn: 300 }) // 5 min

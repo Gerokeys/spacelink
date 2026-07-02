@@ -129,7 +129,7 @@ export function UsersManager({ users: initial }: { users: UserRow[] }) {
               </tr>
             ))}
           </tbody>
-        </table>
+        </table></div>
         {filtered.length === 0 && (
           <div className="py-12 text-center text-gray-400 text-sm">No users found</div>
         )}

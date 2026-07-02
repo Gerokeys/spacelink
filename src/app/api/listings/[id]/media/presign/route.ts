@@ -21,15 +21,22 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     return NextResponse.json({ success: false, error: "Forbidden" }, { status: 403 })
   }
 
-  const { contentType } = await req.json()
+  const { contentType, size } = await req.json()
 
   if (!validateImageMime(contentType)) {
     return NextResponse.json({ success: false, error: "Only JPG, PNG and WebP images are allowed" }, { status: 422 })
   }
 
+  if (typeof size !== "number" || !Number.isFinite(size) || size <= 0 || size > MAX_PHOTO_SIZE) {
+    return NextResponse.json(
+      { success: false, error: `File size must be between 1 byte and ${MAX_PHOTO_SIZE / 1024 / 1024}MB` },
+      { status: 422 }
+    )
+  }
+
   const ext = getExtFromMime(contentType)
   const key = generateMediaKey("listings", ext)
-  const { uploadUrl, cdnUrl } = await getPresignedUploadUrl(key, contentType, MAX_PHOTO_SIZE)
+  const { uploadUrl, cdnUrl } = await getPresignedUploadUrl(key, contentType, size)
 
   return NextResponse.json({ success: true, data: { uploadUrl, cdnUrl, key } })
 }

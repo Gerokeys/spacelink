@@ -1,5 +1,4 @@
 import { notFound } from "next/navigation"
-import Image from "next/image"
 import Link from "next/link"
 import {
   MapPin, Bed, Bath, Maximize, Car, CheckCircle2,
@@ -9,12 +8,13 @@ import { db } from "@/lib/db"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { InquiryForm } from "@/components/forms/InquiryForm"
+import { PhotoGallery } from "@/components/listings/PhotoGallery"
 import { formatPrice, bedroomLabel, sizeLabelSqft, timeAgo } from "@/lib/utils"
 import { LISTING_TYPE_LABELS, PRICE_PERIOD_LABELS } from "@/types"
 import type { Metadata } from "next"
 
 interface Props {
-  params: { id: string }
+  params: Promise<{ id: string }>
 }
 
 async function getListing(id: string) {
@@ -48,7 +48,8 @@ async function getListing(id: string) {
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const listing = await getListing(params.id)
+  const { id } = await params
+  const listing = await getListing(id)
   if (!listing) return { title: "Listing not found" }
   return {
     title: listing.title,
@@ -62,14 +63,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function ListingDetailPage({ params }: Props) {
-  const listing = await getListing(params.id)
+  const { id } = await params
+  const listing = await getListing(id)
   if (!listing) notFound()
 
   // Fire view count increment non-blocking
-  db.listing.update({ where: { id: params.id }, data: { viewCount: { increment: 1 } } }).catch(() => {})
+  db.listing.update({ where: { id }, data: { viewCount: { increment: 1 } } }).catch(() => {})
 
   const photos = listing.media.filter((m) => m.type === "PHOTO")
-  const primaryPhoto = listing.media.find((m) => m.isPrimary) ?? listing.media[0]
   const hasVirtualTour = !!listing.tourConfig?.scenes.length
   const isVerified = listing.owner.profile?.idVerificationStatus === "VERIFIED"
 
@@ -88,28 +89,10 @@ export default async function ListingDetailPage({ params }: Props) {
       </Link>
 
       {/* Photo gallery */}
-      <div className="grid grid-cols-2 md:grid-cols-4 grid-rows-2 gap-2 rounded-2xl overflow-hidden mb-8 h-56 sm:h-72 md:h-96">
-        {photos.slice(0, 5).map((photo, i) => (
-          <div
-            key={photo.id}
-            className={`relative overflow-hidden bg-gray-100 ${i === 0 ? "col-span-2 row-span-2" : "hidden md:block"}`}
-          >
-            <Image
-              src={photo.cdnUrl ?? photo.url}
-              alt={`${listing.title} photo ${i + 1}`}
-              fill
-              className="object-cover hover:scale-105 transition-transform duration-500"
-              priority={i === 0}
-              sizes={i === 0 ? "(max-width: 768px) 100vw, 50vw" : "25vw"}
-            />
-            {i === 4 && photos.length > 5 && (
-              <div className="absolute inset-0 bg-black/50 flex items-center justify-center text-white font-semibold">
-                +{photos.length - 5} more
-              </div>
-            )}
-          </div>
-        ))}
-      </div>
+      <PhotoGallery
+        photos={photos.map((p) => ({ id: p.id, url: p.cdnUrl ?? p.url }))}
+        title={listing.title}
+      />
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Main content */}
@@ -287,7 +270,7 @@ export default async function ListingDetailPage({ params }: Props) {
                   <span className="text-gray-400">({listing._count.reviews} reviews)</span>
                 </div>
               )}
-              <InquiryForm listingId={params.id} listingTitle={listing.title} />
+              <InquiryForm listingId={id} listingTitle={listing.title} />
             </div>
 
             {/* Virtual tour */}

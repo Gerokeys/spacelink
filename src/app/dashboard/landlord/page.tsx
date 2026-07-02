@@ -1,6 +1,7 @@
 import { getServerSession } from "next-auth"
 import { redirect } from "next/navigation"
 import Link from "next/link"
+import Image from "next/image"
 import { Plus, Eye, MessageSquare, Star, TrendingUp } from "lucide-react"
 import { authOptions } from "@/lib/auth"
 import { db } from "@/lib/db"
@@ -102,12 +103,14 @@ export default async function LandlordDashboardPage() {
                   const badge = STATUS_BADGE[listing.status] ?? { label: listing.status, variant: "secondary" as const }
                   return (
                     <div key={listing.id} className="flex items-center gap-4 px-5 py-4 hover:bg-gray-50 transition-colors">
-                      <div className="w-14 h-14 rounded-lg bg-gray-100 shrink-0 overflow-hidden">
+                      <div className="relative w-14 h-14 rounded-lg bg-gray-100 shrink-0 overflow-hidden">
                         {listing.media[0] && (
-                          <img
+                          <Image
                             src={listing.media[0].cdnUrl ?? listing.media[0].url}
                             alt=""
-                            className="w-full h-full object-cover"
+                            fill
+                            sizes="56px"
+                            className="object-cover"
                           />
                         )}
                       </div>

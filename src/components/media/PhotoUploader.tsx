@@ -33,7 +33,7 @@ export function PhotoUploader({ listingId, initialPhotos = [] }: PhotoUploaderPr
     const presignRes = await fetch(`/api/listings/${listingId}/media/presign`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ contentType: file.type }),
+      body: JSON.stringify({ contentType: file.type, size: file.size }),
     })
     const presignJson = await presignRes.json()
     if (!presignJson.success) throw new Error(presignJson.error)
