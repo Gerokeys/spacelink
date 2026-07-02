@@ -119,7 +119,7 @@ export default async function HomePage() {
         <div className="absolute inset-0 bg-stone-900/60" />
         <div className="relative w-full container mx-auto px-4 py-20">
           <div className="max-w-2xl mx-auto text-center">
-            <p className="text-teal-300 text-sm font-medium tracking-widest uppercase mb-4">
+            <p className="text-brand-300 text-sm font-medium tracking-widest uppercase mb-4">
               Kenya's modern property platform
             </p>
             <h1 className="text-4xl md:text-6xl font-bold text-white leading-tight mb-5">
@@ -132,9 +132,9 @@ export default async function HomePage() {
               <SearchBar />
             </div>
             <div className="flex items-center justify-center gap-6 mt-6 text-sm text-stone-400 flex-wrap">
-              <span className="flex items-center gap-1.5"><Shield className="w-3.5 h-3.5 text-teal-400" /> Verified landlords</span>
-              <span className="flex items-center gap-1.5"><Zap className="w-3.5 h-3.5 text-teal-400" /> Virtual tours</span>
-              <span className="flex items-center gap-1.5"><MapPin className="w-3.5 h-3.5 text-teal-400" /> Nairobi · Mombasa · Kisumu</span>
+              <span className="flex items-center gap-1.5"><Shield className="w-3.5 h-3.5 text-brand-400" /> Verified landlords</span>
+              <span className="flex items-center gap-1.5"><Zap className="w-3.5 h-3.5 text-brand-400" /> Virtual tours</span>
+              <span className="flex items-center gap-1.5"><MapPin className="w-3.5 h-3.5 text-brand-400" /> Nairobi · Mombasa · Kisumu</span>
             </div>
           </div>
         </div>
@@ -146,14 +146,14 @@ export default async function HomePage() {
           <div className="flex items-center overflow-x-auto scrollbar-hide">
             {PROPERTY_TYPES.map(({ label, icon: Icon, href }) => (
               <Link key={label} href={href}
-                className="flex flex-col items-center gap-1.5 px-8 py-4 text-sm font-medium text-stone-500 hover:text-teal-600 border-b-2 border-transparent hover:border-teal-600 transition-colors whitespace-nowrap shrink-0"
+                className="flex flex-col items-center gap-1.5 px-8 py-4 text-sm font-medium text-stone-500 hover:text-brand-600 border-b-2 border-transparent hover:border-brand-600 transition-colors whitespace-nowrap shrink-0"
               >
                 <Icon className="w-5 h-5" />
                 {label}
               </Link>
             ))}
             <Link href="/qualify"
-              className="ml-auto flex items-center gap-1.5 px-6 py-4 text-sm font-medium text-teal-600 hover:text-teal-700 whitespace-nowrap shrink-0"
+              className="ml-auto flex items-center gap-1.5 px-6 py-4 text-sm font-medium text-brand-600 hover:text-brand-700 whitespace-nowrap shrink-0"
             >
               <TrendingUp className="w-4 h-4" /> What can I afford?
             </Link>
@@ -172,8 +172,8 @@ export default async function HomePage() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
           {FEATURES.map(({ icon: Icon, title, desc }) => (
             <div key={title} className="bg-white rounded-2xl border border-stone-200 p-6 hover:shadow-md transition-shadow">
-              <div className="w-11 h-11 rounded-xl bg-teal-50 flex items-center justify-center mb-4">
-                <Icon className="w-5 h-5 text-teal-600" />
+              <div className="w-11 h-11 rounded-xl bg-brand-50 flex items-center justify-center mb-4">
+                <Icon className="w-5 h-5 text-brand-600" />
               </div>
               <h3 className="font-semibold text-stone-900 mb-2">{title}</h3>
               <p className="text-sm text-stone-500 leading-relaxed">{desc}</p>
@@ -192,7 +192,7 @@ export default async function HomePage() {
               </h2>
               <p className="text-stone-500 text-sm mt-1">Fresh spaces from verified landlords</p>
             </div>
-            <Link href="/search" className="text-sm text-teal-600 hover:text-teal-700 font-medium flex items-center gap-1">
+            <Link href="/search" className="text-sm text-brand-600 hover:text-brand-700 font-medium flex items-center gap-1">
               View all <ArrowRight className="w-3.5 h-3.5" />
             </Link>
           </div>
@@ -221,15 +221,15 @@ export default async function HomePage() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Tenants */}
           <div className="bg-white rounded-2xl border border-stone-200 p-8">
-            <div className="w-11 h-11 rounded-xl bg-teal-50 flex items-center justify-center mb-5">
-              <Home className="w-5 h-5 text-teal-600" />
+            <div className="w-11 h-11 rounded-xl bg-brand-50 flex items-center justify-center mb-5">
+              <Home className="w-5 h-5 text-brand-600" />
             </div>
             <h3 className="text-xl font-bold text-stone-900 mb-2">Looking for a space?</h3>
             <p className="text-stone-500 text-sm mb-5">SpaceLink connects you directly with landlords across Kenya. No agents, no hidden fees.</p>
             <ul className="space-y-2.5 mb-6">
               {TENANT_BENEFITS.map((b) => (
                 <li key={b} className="flex items-start gap-2.5 text-sm text-stone-700">
-                  <CheckCircle className="w-4 h-4 text-teal-500 shrink-0 mt-0.5" />
+                  <CheckCircle className="w-4 h-4 text-brand-500 shrink-0 mt-0.5" />
                   {b}
                 </li>
               ))}
@@ -243,20 +243,20 @@ export default async function HomePage() {
           {/* Landlords */}
           <div className="bg-stone-900 rounded-2xl p-8 text-white">
             <div className="w-11 h-11 rounded-xl bg-white/10 flex items-center justify-center mb-5">
-              <Building2 className="w-5 h-5 text-teal-400" />
+              <Building2 className="w-5 h-5 text-brand-400" />
             </div>
             <h3 className="text-xl font-bold mb-2">Have a space to rent?</h3>
             <p className="text-stone-400 text-sm mb-5">List on SpaceLink and reach thousands of verified tenants. It's completely free to get started.</p>
             <ul className="space-y-2.5 mb-6">
               {LANDLORD_BENEFITS.map((b) => (
                 <li key={b} className="flex items-start gap-2.5 text-sm text-stone-300">
-                  <CheckCircle className="w-4 h-4 text-teal-400 shrink-0 mt-0.5" />
+                  <CheckCircle className="w-4 h-4 text-brand-400 shrink-0 mt-0.5" />
                   {b}
                 </li>
               ))}
             </ul>
             <Link href="/dashboard/landlord/listings/new">
-              <Button className="bg-teal-600 hover:bg-teal-500">List your space — it's free</Button>
+              <Button className="bg-brand-600 hover:bg-brand-500">List your space — it's free</Button>
             </Link>
           </div>
         </div>
@@ -267,14 +267,14 @@ export default async function HomePage() {
         <div className="container mx-auto px-4">
           <div className="flex items-end justify-between mb-6">
             <h2 className="text-2xl font-bold text-stone-900">Browse by neighbourhood</h2>
-            <Link href="/search?city=Nairobi" className="text-sm text-teal-600 hover:text-teal-700 font-medium flex items-center gap-1">
+            <Link href="/search?city=Nairobi" className="text-sm text-brand-600 hover:text-brand-700 font-medium flex items-center gap-1">
               All areas <ArrowRight className="w-3.5 h-3.5" />
             </Link>
           </div>
           <div className="flex flex-wrap gap-2">
             {NAIROBI_AREAS.map((area) => (
               <Link key={area.slug} href={`/search?neighbourhood=${area.slug}`}
-                className="flex items-center gap-1.5 px-4 py-2 rounded-full border border-stone-200 bg-stone-50 text-sm text-stone-700 hover:border-teal-400 hover:text-teal-600 transition-colors"
+                className="flex items-center gap-1.5 px-4 py-2 rounded-full border border-stone-200 bg-stone-50 text-sm text-stone-700 hover:border-brand-400 hover:text-brand-600 transition-colors"
               >
                 <MapPin className="w-3.5 h-3.5" />
                 {area.name}
@@ -286,9 +286,9 @@ export default async function HomePage() {
 
       {/* ── Affordability CTA ── */}
       <section className="container mx-auto px-4 py-12">
-        <div className="bg-teal-50 border border-teal-100 rounded-2xl p-8 md:p-10 flex flex-col md:flex-row items-center gap-6">
+        <div className="bg-brand-50 border border-brand-100 rounded-2xl p-8 md:p-10 flex flex-col md:flex-row items-center gap-6">
           <div className="flex-1">
-            <div className="flex items-center gap-2 text-teal-600 text-sm font-medium mb-2">
+            <div className="flex items-center gap-2 text-brand-600 text-sm font-medium mb-2">
               <TrendingUp className="w-4 h-4" /> Affordability calculator
             </div>
             <h2 className="text-2xl font-bold text-stone-900 mb-2">
@@ -299,7 +299,7 @@ export default async function HomePage() {
             </p>
           </div>
           <Link href="/qualify" className="shrink-0">
-            <Button size="lg" className="bg-teal-600 hover:bg-teal-700 text-white px-8">
+            <Button size="lg" className="bg-brand-600 hover:bg-brand-700 text-white px-8">
               Find what I qualify for
             </Button>
           </Link>
@@ -320,7 +320,7 @@ export default async function HomePage() {
               { step: "03", title: "Contact directly", desc: "Send an inquiry straight to the landlord. No agents, no middlemen.", icon: MessageCircle },
             ].map(({ step, title, desc, icon: Icon }) => (
               <div key={step} className="flex gap-4">
-                <div className="w-10 h-10 rounded-xl bg-teal-600 text-white font-bold text-sm flex items-center justify-center shrink-0">
+                <div className="w-10 h-10 rounded-xl bg-brand-600 text-white font-bold text-sm flex items-center justify-center shrink-0">
                   {step}
                 </div>
                 <div>
@@ -343,7 +343,7 @@ export default async function HomePage() {
             </div>
             <div className="flex gap-3 shrink-0">
               <Link href="/dashboard/landlord/listings/new">
-                <Button size="lg" className="bg-teal-600 hover:bg-teal-500">List your space</Button>
+                <Button size="lg" className="bg-brand-600 hover:bg-brand-500">List your space</Button>
               </Link>
               <Link href="/search">
                 <Button size="lg" variant="outline" className="border-stone-700 text-stone-300 hover:bg-stone-800 hover:text-white">

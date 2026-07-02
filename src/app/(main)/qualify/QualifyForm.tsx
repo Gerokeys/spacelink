@@ -118,8 +118,8 @@ export function QualifyForm() {
             key={s}
             className={cn(
               "flex-1 text-center py-3.5 text-xs font-medium transition-colors",
-              i === step ? "bg-teal-600 text-white" :
-              i < step ? "bg-teal-50 text-teal-700" :
+              i === step ? "bg-brand-600 text-white" :
+              i < step ? "bg-brand-50 text-brand-700" :
               "text-stone-400"
             )}
           >
@@ -142,7 +142,7 @@ export function QualifyForm() {
               <button
                 onClick={() => setForm((f) => ({ ...f, useCustomBudget: false }))}
                 className={cn("flex-1 py-2.5 rounded-xl border text-sm font-medium transition-colors",
-                  !form.useCustomBudget ? "border-teal-500 bg-teal-50 text-teal-700" : "border-stone-200 text-stone-600"
+                  !form.useCustomBudget ? "border-brand-500 bg-brand-50 text-brand-700" : "border-stone-200 text-stone-600"
                 )}
               >
                 Enter my income
@@ -150,7 +150,7 @@ export function QualifyForm() {
               <button
                 onClick={() => setForm((f) => ({ ...f, useCustomBudget: true }))}
                 className={cn("flex-1 py-2.5 rounded-xl border text-sm font-medium transition-colors",
-                  form.useCustomBudget ? "border-teal-500 bg-teal-50 text-teal-700" : "border-stone-200 text-stone-600"
+                  form.useCustomBudget ? "border-brand-500 bg-brand-50 text-brand-700" : "border-stone-200 text-stone-600"
                 )}
               >
                 Enter my budget directly
@@ -167,7 +167,7 @@ export function QualifyForm() {
                     className={cn(
                       "w-full flex items-center justify-between px-4 py-3 rounded-xl border text-sm transition-colors",
                       form.incomeRange === max
-                        ? "border-teal-500 bg-teal-50 text-teal-700 font-medium"
+                        ? "border-brand-500 bg-brand-50 text-brand-700 font-medium"
                         : "border-stone-200 text-stone-700 hover:border-stone-300"
                     )}
                   >
@@ -188,7 +188,7 @@ export function QualifyForm() {
                   value={form.customBudget}
                   onChange={(e) => setForm((f) => ({ ...f, customBudget: e.target.value }))}
                   placeholder="e.g. 35000"
-                  className="w-full rounded-xl border border-stone-300 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
+                  className="w-full rounded-xl border border-stone-300 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
                 />
               </div>
             )}
@@ -208,7 +208,7 @@ export function QualifyForm() {
                   className={cn(
                     "flex items-center gap-2 px-4 py-3 rounded-xl border text-sm transition-colors",
                     form.city === city
-                      ? "border-teal-500 bg-teal-50 text-teal-700 font-medium"
+                      ? "border-brand-500 bg-brand-50 text-brand-700 font-medium"
                       : "border-stone-200 text-stone-700 hover:border-stone-300"
                   )}
                 >
@@ -236,13 +236,13 @@ export function QualifyForm() {
                     className={cn(
                       "flex items-start gap-3 p-4 rounded-xl border text-left transition-colors",
                       form.propertyType === value
-                        ? "border-teal-500 bg-teal-50"
+                        ? "border-brand-500 bg-brand-50"
                         : "border-stone-200 hover:border-stone-300"
                     )}
                   >
-                    <Icon className={cn("w-4 h-4 mt-0.5 shrink-0", form.propertyType === value ? "text-teal-600" : "text-stone-400")} />
+                    <Icon className={cn("w-4 h-4 mt-0.5 shrink-0", form.propertyType === value ? "text-brand-600" : "text-stone-400")} />
                     <div>
-                      <div className={cn("text-sm font-medium", form.propertyType === value ? "text-teal-700" : "text-stone-800")}>{label}</div>
+                      <div className={cn("text-sm font-medium", form.propertyType === value ? "text-brand-700" : "text-stone-800")}>{label}</div>
                       <div className="text-xs text-stone-400 mt-0.5">{desc}</div>
                     </div>
                   </button>
@@ -261,7 +261,7 @@ export function QualifyForm() {
                       className={cn(
                         "w-12 h-12 rounded-xl border text-sm font-medium transition-colors",
                         form.minBedrooms === n
-                          ? "border-teal-500 bg-teal-50 text-teal-700"
+                          ? "border-brand-500 bg-brand-50 text-brand-700"
                           : "border-stone-200 text-stone-600 hover:border-stone-300"
                       )}
                     >
@@ -278,7 +278,7 @@ export function QualifyForm() {
                   type="checkbox"
                   checked={form.furnished}
                   onChange={(e) => setForm((f) => ({ ...f, furnished: e.target.checked }))}
-                  className="w-4 h-4 rounded text-teal-600"
+                  className="w-4 h-4 rounded text-brand-600"
                 />
                 <span className="text-sm text-stone-700">Furnished</span>
               </label>
@@ -287,7 +287,7 @@ export function QualifyForm() {
                   type="checkbox"
                   checked={form.petsAllowed}
                   onChange={(e) => setForm((f) => ({ ...f, petsAllowed: e.target.checked }))}
-                  className="w-4 h-4 rounded text-teal-600"
+                  className="w-4 h-4 rounded text-brand-600"
                 />
                 <span className="text-sm text-stone-700">Pets allowed</span>
               </label>
@@ -299,18 +299,18 @@ export function QualifyForm() {
         {step === 3 && (
           <div>
             {/* Budget summary card */}
-            <div className="bg-teal-50 border border-teal-100 rounded-xl p-5 mb-6">
+            <div className="bg-brand-50 border border-brand-100 rounded-xl p-5 mb-6">
               <div className="flex flex-wrap gap-6 text-sm">
                 <div>
-                  <p className="text-teal-600 text-xs font-medium uppercase tracking-wide mb-0.5">Max monthly rent</p>
+                  <p className="text-brand-600 text-xs font-medium uppercase tracking-wide mb-0.5">Max monthly rent</p>
                   <p className="text-2xl font-bold text-stone-900">{formatPrice(maxRent, "KES")}</p>
                 </div>
                 <div>
-                  <p className="text-teal-600 text-xs font-medium uppercase tracking-wide mb-0.5">City</p>
+                  <p className="text-brand-600 text-xs font-medium uppercase tracking-wide mb-0.5">City</p>
                   <p className="text-lg font-semibold text-stone-900">{form.city}</p>
                 </div>
                 <div>
-                  <p className="text-teal-600 text-xs font-medium uppercase tracking-wide mb-0.5">Type</p>
+                  <p className="text-brand-600 text-xs font-medium uppercase tracking-wide mb-0.5">Type</p>
                   <p className="text-lg font-semibold text-stone-900">
                     {PROPERTY_TYPES.find((t) => t.value === form.propertyType)?.label}
                   </p>
@@ -356,7 +356,7 @@ export function QualifyForm() {
                   We're growing fast. Browse all listings or adjust your budget.
                 </p>
                 <div className="flex gap-3 justify-center">
-                  <button onClick={() => setStep(0)} className="text-sm text-teal-600 underline">Adjust budget</button>
+                  <button onClick={() => setStep(0)} className="text-sm text-brand-600 underline">Adjust budget</button>
                   <Link href="/search"><Button variant="outline" size="sm">Browse all listings</Button></Link>
                 </div>
               </div>

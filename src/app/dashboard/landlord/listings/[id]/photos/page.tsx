@@ -50,7 +50,7 @@ export default async function ListingPhotosPage({ params }: Props) {
           </div>
           <div className="flex items-center gap-1.5 shrink-0">
             {photos.length >= 3 ? (
-              <span className="flex items-center gap-1.5 text-sm text-teal-600 font-medium">
+              <span className="flex items-center gap-1.5 text-sm text-brand-600 font-medium">
                 <CheckCircle className="w-4 h-4" /> {photos.length} photos added
               </span>
             ) : (
@@ -64,8 +64,8 @@ export default async function ListingPhotosPage({ params }: Props) {
 
       {/* Listing title card */}
       <div className="bg-stone-50 border border-stone-200 rounded-xl p-4 mb-6 flex items-center gap-3">
-        <div className="w-8 h-8 rounded-lg bg-teal-100 flex items-center justify-center shrink-0">
-          <CheckCircle className="w-4 h-4 text-teal-600" />
+        <div className="w-8 h-8 rounded-lg bg-brand-100 flex items-center justify-center shrink-0">
+          <CheckCircle className="w-4 h-4 text-brand-600" />
         </div>
         <div className="min-w-0">
           <p className="font-medium text-stone-900 truncate">{listing.title}</p>

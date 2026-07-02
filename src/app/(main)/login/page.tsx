@@ -16,7 +16,7 @@ export default function LoginPage() {
         {/* Logo */}
         <div className="flex flex-col items-center mb-8">
           <Link href="/" className="flex items-center gap-2 mb-6">
-            <div className="w-10 h-10 rounded-xl bg-teal-600 flex items-center justify-center">
+            <div className="w-10 h-10 rounded-xl bg-brand-600 flex items-center justify-center">
               <Home className="w-5 h-5 text-white" />
             </div>
             <span className="font-bold text-xl text-gray-900">SpaceLink</span>
@@ -43,9 +43,9 @@ export default function LoginPage() {
 
           <div className="text-center text-xs text-gray-400 pt-2">
             By signing in, you agree to our{" "}
-            <span className="text-teal-600 cursor-pointer">Terms of Service</span>
+            <span className="text-brand-600 cursor-pointer">Terms of Service</span>
             {" "}and{" "}
-            <span className="text-teal-600 cursor-pointer">Privacy Policy</span>
+            <span className="text-brand-600 cursor-pointer">Privacy Policy</span>
           </div>
         </div>
 
@@ -53,7 +53,7 @@ export default function LoginPage() {
           Don&apos;t have an account?{" "}
           <button
             onClick={() => signIn("google", { callbackUrl })}
-            className="text-teal-600 hover:text-teal-700 font-medium"
+            className="text-brand-600 hover:text-brand-700 font-medium"
           >
             Sign up with Google
           </button>

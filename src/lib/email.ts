@@ -50,7 +50,7 @@ export async function sendInquiryNotification({
     subject: `New inquiry for "${listingTitle}" — SpaceLink`,
     html: `
       <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto;">
-        <h2 style="color: #1a1a2e;">New Inquiry Received</h2>
+        <h2 style="color: #2a2a33;">New Inquiry Received</h2>
         <p>Hello ${esc(landlordName)},</p>
         <p>You have a new inquiry for your listing: <strong>${esc(listingTitle)}</strong></p>
         <div style="background: #f5f5f5; padding: 16px; border-radius: 8px; margin: 16px 0;">
@@ -62,7 +62,7 @@ export async function sendInquiryNotification({
           <p style="white-space: pre-wrap;">${esc(message)}</p>
         </div>
         <a href="${APP_URL}/dashboard/landlord/inquiries"
-           style="display: inline-block; background: #4f46e5; color: white; padding: 12px 24px;
+           style="display: inline-block; background: #006aff; color: white; padding: 12px 24px;
                   border-radius: 6px; text-decoration: none; margin-top: 8px;">
           View in Dashboard
         </a>
@@ -94,12 +94,12 @@ export async function sendInquiryConfirmation({
     subject: `Your inquiry was sent — SpaceLink`,
     html: `
       <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto;">
-        <h2 style="color: #1a1a2e;">Inquiry Sent!</h2>
+        <h2 style="color: #2a2a33;">Inquiry Sent!</h2>
         <p>Hi ${esc(tenantName)},</p>
         <p>Your inquiry for <strong>${esc(listingTitle)}</strong> has been sent to the landlord.
            They'll get back to you soon.</p>
         <a href="${APP_URL}/listings/${listingId}"
-           style="display: inline-block; background: #4f46e5; color: white; padding: 12px 24px;
+           style="display: inline-block; background: #006aff; color: white; padding: 12px 24px;
                   border-radius: 6px; text-decoration: none; margin-top: 8px;">
           View Listing
         </a>
@@ -131,11 +131,11 @@ export async function sendListingApproved({
     subject: `Your listing is live — SpaceLink`,
     html: `
       <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto;">
-        <h2 style="color: #1a1a2e;">Your listing is live!</h2>
+        <h2 style="color: #2a2a33;">Your listing is live!</h2>
         <p>Hi ${esc(ownerName)},</p>
         <p><strong>${esc(listingTitle)}</strong> has been approved and is now live on SpaceLink.</p>
         <a href="${APP_URL}/listings/${listingId}"
-           style="display: inline-block; background: #4f46e5; color: white; padding: 12px 24px;
+           style="display: inline-block; background: #006aff; color: white; padding: 12px 24px;
                   border-radius: 6px; text-decoration: none; margin-top: 8px;">
           View Your Listing
         </a>

@@ -22,7 +22,7 @@ const ROLE_STYLES: Record<UserRole, string> = {
   TENANT: "bg-gray-100 text-gray-600",
   LANDLORD: "bg-blue-100 text-blue-700",
   AGENT: "bg-violet-100 text-violet-700",
-  ADMIN: "bg-teal-100 text-teal-700",
+  ADMIN: "bg-brand-100 text-brand-700",
   SUPER_ADMIN: "bg-rose-100 text-rose-700",
 }
 
@@ -68,7 +68,7 @@ export function UsersManager({ users: initial }: { users: UserRow[] }) {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Search by name, email or role..."
-          className="w-full max-w-sm rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
+          className="w-full max-w-sm rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
         />
       </div>
 
@@ -89,7 +89,7 @@ export function UsersManager({ users: initial }: { users: UserRow[] }) {
               <tr key={user.id} className="hover:bg-gray-50 transition-colors">
                 <td className="px-5 py-4">
                   <div className="flex items-center gap-2.5">
-                    <div className="w-8 h-8 rounded-full bg-teal-100 flex items-center justify-center text-teal-700 font-semibold text-sm shrink-0">
+                    <div className="w-8 h-8 rounded-full bg-brand-100 flex items-center justify-center text-brand-700 font-semibold text-sm shrink-0">
                       {user.name?.[0]?.toUpperCase() ?? <User className="w-4 h-4" />}
                     </div>
                     <div>
@@ -115,14 +115,14 @@ export function UsersManager({ users: initial }: { users: UserRow[] }) {
                       defaultValue={user.role}
                       onChange={(e) => handleRoleChange(user.id, e.target.value as UserRole)}
                       disabled={loading === user.id}
-                      className="rounded-lg border border-gray-300 px-2 py-1 text-xs focus:outline-none focus:ring-2 focus:ring-teal-500 disabled:opacity-50"
+                      className="rounded-lg border border-gray-300 px-2 py-1 text-xs focus:outline-none focus:ring-2 focus:ring-brand-500 disabled:opacity-50"
                     >
                       {ROLES.map((r) => (
                         <option key={r} value={r}>{r}</option>
                       ))}
                     </select>
                     {loading === user.id && (
-                      <div className="w-4 h-4 border-2 border-teal-600 border-t-transparent rounded-full animate-spin" />
+                      <div className="w-4 h-4 border-2 border-brand-600 border-t-transparent rounded-full animate-spin" />
                     )}
                   </div>
                 </td>

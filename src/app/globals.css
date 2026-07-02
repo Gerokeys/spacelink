@@ -1,8 +1,23 @@
 @import "tailwindcss";
 
+/* Brand palette — Zillow-style blue, anchored on #006AFF at the 600 stop */
+@theme {
+  --color-brand-50: #eff5ff;
+  --color-brand-100: #dcebff;
+  --color-brand-200: #b9d6ff;
+  --color-brand-300: #8abaff;
+  --color-brand-400: #4d94ff;
+  --color-brand-500: #1f7aff;
+  --color-brand-600: #006aff;
+  --color-brand-700: #0056ce;
+  --color-brand-800: #0045a5;
+  --color-brand-900: #063b85;
+  --color-brand-950: #04264f;
+}
+
 :root {
-  --background: #fafaf9;
-  --foreground: #1c1917;
+  --background: #ffffff;
+  --foreground: #2a2a33;
 }
 
 html,

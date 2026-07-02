@@ -16,7 +16,7 @@ export function SignInBanner() {
   if (status === "loading" || session) return null
 
   return (
-    <section className="bg-teal-600 text-white py-8">
+    <section className="bg-brand-600 text-white py-8">
       <div className="container mx-auto px-4">
         <div className="flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="flex items-start gap-4">
@@ -27,7 +27,7 @@ export function SignInBanner() {
               <h3 className="font-semibold text-lg mb-1">
                 Get a personalised experience
               </h3>
-              <div className="flex flex-wrap gap-4 text-sm text-teal-100">
+              <div className="flex flex-wrap gap-4 text-sm text-brand-100">
                 {PERKS.map(({ icon: Icon, label }) => (
                   <span key={label} className="flex items-center gap-1.5">
                     <Icon className="w-3.5 h-3.5" /> {label}
@@ -40,7 +40,7 @@ export function SignInBanner() {
           <div className="flex items-center gap-3 shrink-0">
             <Button
               onClick={() => signIn("google")}
-              className="bg-white text-teal-700 hover:bg-teal-50 font-semibold"
+              className="bg-white text-brand-700 hover:bg-brand-50 font-semibold"
               size="lg"
             >
               <svg className="w-4 h-4" viewBox="0 0 24 24">
@@ -51,7 +51,7 @@ export function SignInBanner() {
               </svg>
               Sign in with Google
             </Button>
-            <p className="text-sm text-teal-200 hidden sm:block">Free, takes 10 seconds</p>
+            <p className="text-sm text-brand-200 hidden sm:block">Free, takes 10 seconds</p>
           </div>
         </div>
       </div>

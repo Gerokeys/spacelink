@@ -130,14 +130,14 @@ export function PhotoUploader({ listingId, initialPhotos = [] }: PhotoUploaderPr
         {...getRootProps()}
         className={cn(
           "border-2 border-dashed rounded-2xl p-8 text-center cursor-pointer transition-colors",
-          isDragActive ? "border-teal-500 bg-teal-50" : "border-stone-300 hover:border-teal-400 hover:bg-stone-50",
+          isDragActive ? "border-brand-500 bg-brand-50" : "border-stone-300 hover:border-brand-400 hover:bg-stone-50",
           (uploading || photos.length >= MAX_PHOTOS) && "opacity-50 cursor-not-allowed"
         )}
       >
         <input {...getInputProps()} />
         <div className="flex flex-col items-center gap-3">
           {uploading ? (
-            <Loader2 className="w-10 h-10 text-teal-500 animate-spin" />
+            <Loader2 className="w-10 h-10 text-brand-500 animate-spin" />
           ) : (
             <ImagePlus className="w-10 h-10 text-stone-400" />
           )}
@@ -146,7 +146,7 @@ export function PhotoUploader({ listingId, initialPhotos = [] }: PhotoUploaderPr
               {uploading ? "Uploading..." : isDragActive ? "Drop photos here" : "Drag & drop photos here"}
             </p>
             <p className="text-sm text-stone-400 mt-1">
-              or <span className="text-teal-600 font-medium">browse files</span> · JPG, PNG, WebP · Max 10MB each
+              or <span className="text-brand-600 font-medium">browse files</span> · JPG, PNG, WebP · Max 10MB each
             </p>
           </div>
           <p className="text-xs text-stone-400">
@@ -170,7 +170,7 @@ export function PhotoUploader({ listingId, initialPhotos = [] }: PhotoUploaderPr
 
               {/* Primary badge */}
               {photo.isPrimary && (
-                <div className="absolute top-2 left-2 bg-teal-600 text-white text-xs px-2 py-0.5 rounded-full flex items-center gap-1 font-medium">
+                <div className="absolute top-2 left-2 bg-brand-600 text-white text-xs px-2 py-0.5 rounded-full flex items-center gap-1 font-medium">
                   <Star className="w-3 h-3" /> Cover
                 </div>
               )}
@@ -180,7 +180,7 @@ export function PhotoUploader({ listingId, initialPhotos = [] }: PhotoUploaderPr
                 {!photo.isPrimary && (
                   <button
                     onClick={() => handleSetPrimary(photo)}
-                    className="bg-white text-stone-800 text-xs px-2 py-1 rounded-lg font-medium hover:bg-teal-50 hover:text-teal-700 transition-colors"
+                    className="bg-white text-stone-800 text-xs px-2 py-1 rounded-lg font-medium hover:bg-brand-50 hover:text-brand-700 transition-colors"
                   >
                     Set cover
                   </button>

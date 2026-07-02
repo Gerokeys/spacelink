@@ -24,7 +24,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
         {/* Desktop sidebar */}
         <aside className="hidden md:flex w-56 shrink-0 flex-col border-r border-gray-200 bg-white px-3 py-6 gap-1">
           <div className="flex items-center gap-2 px-3 mb-4">
-            <ShieldCheck className="w-4 h-4 text-teal-600" />
+            <ShieldCheck className="w-4 h-4 text-brand-600" />
             <span className="text-sm font-semibold text-gray-900">Admin Panel</span>
           </div>
           {NAV.map(({ href, icon: Icon, label }) => (
