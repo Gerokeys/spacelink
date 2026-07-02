@@ -2,13 +2,26 @@
 
 import { signIn } from "next-auth/react"
 import { useSearchParams } from "next/navigation"
-import { Home } from "lucide-react"
+import { Home, AlertCircle } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
+
+// NextAuth redirects here with ?error=<code> when sign-in fails
+const ERROR_MESSAGES: Record<string, string> = {
+  OAuthSignin: "Could not start the Google sign-in. Please try again.",
+  OAuthCallback: "Google sign-in was interrupted. Please try again.",
+  OAuthAccountNotLinked: "An account with this email already exists. Sign in with the method you used originally.",
+  AccessDenied: "Access was denied. Your account may not have permission to sign in.",
+  Callback: "We couldn't complete your sign-in. This is usually temporary — please try again in a moment.",
+  Configuration: "Sign-in is misconfigured. Please contact support.",
+  Default: "Something went wrong signing you in. Please try again.",
+}
 
 export default function LoginPage() {
   const searchParams = useSearchParams()
   const callbackUrl = searchParams.get("callbackUrl") ?? "/"
+  const errorCode = searchParams.get("error")
+  const errorMessage = errorCode ? (ERROR_MESSAGES[errorCode] ?? ERROR_MESSAGES.Default) : null
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
@@ -24,6 +37,14 @@ export default function LoginPage() {
           <h1 className="text-2xl font-bold text-gray-900">Welcome back</h1>
           <p className="text-sm text-gray-500 mt-1">Sign in to your account</p>
         </div>
+
+        {/* Sign-in error banner */}
+        {errorMessage && (
+          <div className="flex items-start gap-2.5 bg-red-50 border border-red-200 text-red-700 text-sm rounded-xl px-4 py-3 mb-4">
+            <AlertCircle className="w-4 h-4 mt-0.5 shrink-0" />
+            <p>{errorMessage}</p>
+          </div>
+        )}
 
         {/* Sign in card */}
         <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 space-y-4">

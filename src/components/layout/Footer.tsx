@@ -25,15 +25,15 @@ const LINKS = {
 
 export function Footer() {
   return (
-    <footer className="bg-slate-900 text-slate-400">
+    <footer className="bg-white border-t border-gray-200">
       <div className="container mx-auto px-4 pt-14 pb-8">
 
         {/* Main grid */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-10 pb-10 border-b border-slate-800">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-10 pb-10 border-b border-gray-100">
 
           {/* Brand */}
           <div className="col-span-2 md:col-span-1">
-            <Link href="/" className="flex items-center mb-4">
+            <Link href="/" className="inline-flex items-center mb-4">
               <Image
                 src="/images/logo.png"
                 alt="SpaceLink"
@@ -42,31 +42,34 @@ export function Footer() {
                 className="h-12 w-auto"
               />
             </Link>
-            <p className="text-sm leading-relaxed mb-5">
+            <p className="text-sm text-gray-500 leading-relaxed mb-5">
               Kenya's modern platform for finding residential, office, and commercial spaces — directly from verified landlords.
             </p>
-            <div className="space-y-2 text-sm">
+            <div className="space-y-2 text-sm text-gray-500">
               <div className="flex items-center gap-2">
-                <MapPin className="w-3.5 h-3.5 shrink-0 text-slate-500" />
+                <MapPin className="w-3.5 h-3.5 shrink-0 text-brand-500" />
                 Nairobi, Kenya
               </div>
-              <div className="flex items-center gap-2">
-                <Mail className="w-3.5 h-3.5 shrink-0 text-slate-500" />
+              <a
+                href="mailto:hello@spacelink.co.ke"
+                className="flex items-center gap-2 hover:text-brand-600 transition-colors"
+              >
+                <Mail className="w-3.5 h-3.5 shrink-0 text-brand-500" />
                 hello@spacelink.co.ke
-              </div>
+              </a>
             </div>
           </div>
 
           {/* Link columns */}
           {Object.entries(LINKS).map(([heading, links]) => (
             <div key={heading}>
-              <h4 className="text-white font-semibold text-sm mb-4">{heading}</h4>
+              <h4 className="text-gray-900 font-semibold text-sm mb-4">{heading}</h4>
               <ul className="space-y-2.5">
                 {links.map(({ label, href }) => (
                   <li key={label}>
                     <Link
                       href={href}
-                      className="text-sm hover:text-white transition-colors"
+                      className="text-sm text-gray-500 hover:text-brand-600 transition-colors"
                     >
                       {label}
                     </Link>
@@ -78,10 +81,10 @@ export function Footer() {
         </div>
 
         {/* Bottom bar */}
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-6 text-xs">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-6 text-xs text-gray-400">
           <p>© {new Date().getFullYear()} SpaceLink Technologies Ltd. All rights reserved.</p>
           <p className="flex items-center gap-1">
-            <MapPin className="w-3 h-3" /> Built in Nairobi, Kenya
+            <MapPin className="w-3 h-3 text-brand-500" /> Built in Nairobi, Kenya
           </p>
         </div>
 
