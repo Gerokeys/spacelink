@@ -10,6 +10,7 @@ import { Pause, Play } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { KENYA_CITIES, NAIROBI_NEIGHBOURHOODS } from "@/types"
+import { LocationPicker } from "@/components/map/LocationPicker"
 
 const emptyToUndef = (v: unknown) => (v === "" || v === null || v === undefined ? undefined : Number(v))
 
@@ -32,6 +33,8 @@ const schema = z.object({
   availableFrom: z.string().optional(),
   furnished: z.boolean(),
   petsAllowed: z.boolean(),
+  lat: z.number().nullable().optional(),
+  lng: z.number().nullable().optional(),
 })
 
 type FormData = z.infer<typeof schema>
@@ -47,6 +50,8 @@ interface EditableListing extends Omit<FormData, "deposit" | "depositMonths" | "
   floor: number | null
   parkingSpots: number | null
   minLeaseMonths: number | null
+  lat: number | null
+  lng: number | null
 }
 
 export function EditListingForm({ listing }: { listing: EditableListing }) {
@@ -55,7 +60,7 @@ export function EditListingForm({ listing }: { listing: EditableListing }) {
   const [togglingStatus, setTogglingStatus] = useState(false)
   const [status, setStatus] = useState(listing.status)
 
-  const { register, handleSubmit, watch, formState: { errors } } = useForm<FormData>({
+  const { register, handleSubmit, watch, setValue, formState: { errors } } = useForm<FormData>({
     resolver: zodResolver(schema) as never,
     defaultValues: {
       title: listing.title,
@@ -76,6 +81,8 @@ export function EditListingForm({ listing }: { listing: EditableListing }) {
       availableFrom: listing.availableFrom,
       furnished: listing.furnished,
       petsAllowed: listing.petsAllowed,
+      lat: listing.lat,
+      lng: listing.lng,
     },
   })
 
@@ -161,6 +168,20 @@ export function EditListingForm({ listing }: { listing: EditableListing }) {
           )}
         </div>
         <Input {...register("address")} label="Street address" error={errors.address?.message} />
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Map location <span className="text-gray-400 font-normal">(shows your listing on the search map)</span>
+          </label>
+          <LocationPicker
+            lat={watch("lat") ?? null}
+            lng={watch("lng") ?? null}
+            onChange={(lat, lng) => {
+              setValue("lat", lat)
+              setValue("lng", lng)
+            }}
+            searchHint={[listing.neighbourhood, listing.city].filter(Boolean).join(", ")}
+          />
+        </div>
       </div>
 
       {/* Details */}

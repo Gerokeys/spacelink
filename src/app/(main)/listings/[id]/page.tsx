@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { InquiryForm } from "@/components/forms/InquiryForm"
 import { PhotoGallery } from "@/components/listings/PhotoGallery"
+import { ListingMap } from "@/components/map/ListingMap"
 import { formatPrice, bedroomLabel, sizeLabelSqft, timeAgo } from "@/lib/utils"
 import { LISTING_TYPE_LABELS, PRICE_PERIOD_LABELS } from "@/types"
 import type { Metadata } from "next"
@@ -213,6 +214,18 @@ export default async function ListingDetailPage({ params }: Props) {
               </div>
             </div>
           </div>
+
+          {/* Location */}
+          {listing.lat !== null && listing.lng !== null && (
+            <div>
+              <h2 className="text-lg font-semibold text-gray-900 mb-3">Location</h2>
+              <p className="flex items-center gap-1.5 text-sm text-gray-500 mb-3">
+                <MapPin className="w-4 h-4 shrink-0" />
+                {[listing.address, listing.neighbourhood, listing.city].filter(Boolean).join(", ")}
+              </p>
+              <ListingMap lat={listing.lat} lng={listing.lng} />
+            </div>
+          )}
 
           {/* Landlord card */}
           <div className="border border-gray-200 rounded-xl p-5">

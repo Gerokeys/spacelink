@@ -93,6 +93,8 @@ export default async function EditListingPage({ params }: Props) {
           availableFrom: listing.availableFrom?.toISOString().slice(0, 10) ?? "",
           furnished: listing.furnished,
           petsAllowed: listing.petsAllowed,
+          lat: listing.lat,
+          lng: listing.lng,
         }}
       />
     </div>

@@ -11,6 +11,7 @@ import { Input } from "@/components/ui/input"
 import { KENYA_CITIES, NAIROBI_NEIGHBOURHOODS, LISTING_TYPE_LABELS } from "@/types"
 import type { ListingType } from "@/types"
 import { cn } from "@/lib/utils"
+import { LocationPicker } from "@/components/map/LocationPicker"
 
 interface Amenity {
   id: string
@@ -43,6 +44,8 @@ const schema = z.object({
   minLeaseMonths: z.coerce.number().int().min(1).default(6),
   availableFrom: z.string().optional(),
   amenityIds: z.array(z.string()).default([]),
+  lat: z.number().nullable().optional(),
+  lng: z.number().nullable().optional(),
 })
 
 type FormData = z.infer<typeof schema>
@@ -100,6 +103,8 @@ export function CreateListingForm({ amenities }: { amenities: Amenity[] }) {
           bathrooms: data.bathrooms ?? undefined,
           floor: data.floor ?? undefined,
           deposit: data.deposit ?? undefined,
+          lat: data.lat ?? undefined,
+          lng: data.lng ?? undefined,
         }),
       })
       const json = await res.json()
@@ -208,6 +213,20 @@ export function CreateListingForm({ amenities }: { amenities: Amenity[] }) {
               placeholder="e.g. Parklands Road, next to ABC Supermarket"
               error={errors.address?.message}
             />
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Pin the exact location <span className="text-gray-400 font-normal">(recommended — shows your listing on the map)</span>
+              </label>
+              <LocationPicker
+                lat={watch("lat") ?? null}
+                lng={watch("lng") ?? null}
+                onChange={(lat, lng) => {
+                  setValue("lat", lat)
+                  setValue("lng", lng)
+                }}
+                searchHint={[getValues("neighbourhood"), getValues("city")].filter(Boolean).join(", ")}
+              />
+            </div>
           </div>
         )}
 

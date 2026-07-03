@@ -1,6 +1,9 @@
 "use client"
 
+import "mapbox-gl/dist/mapbox-gl.css"
+import { useEffect, useRef, useState } from "react"
 import { MapPin } from "lucide-react"
+import type { Map as MapboxMap, Marker as MapboxMarker } from "mapbox-gl"
 import type { ListingCard } from "@/types"
 
 interface MapViewProps {
@@ -8,67 +11,145 @@ interface MapViewProps {
 }
 
 const TOKEN = process.env.NEXT_PUBLIC_MAPBOX_TOKEN
+const NAIROBI: [number, number] = [36.8172, -1.2864]
+
+function compactPrice(price: number): string {
+  if (price >= 1_000_000) return `${(price / 1_000_000).toFixed(1).replace(/\.0$/, "")}M`
+  if (price >= 1_000) return `${Math.round(price / 1_000)}K`
+  return String(price)
+}
+
+// Popup content built with DOM APIs so listing text can't inject HTML
+function buildPopupContent(listing: ListingCard): HTMLElement {
+  const root = document.createElement("a")
+  root.href = `/listings/${listing.id}`
+  root.className = "block w-52 no-underline"
+
+  if (listing.primaryPhoto) {
+    const img = document.createElement("img")
+    img.src = listing.primaryPhoto
+    img.alt = listing.title
+    img.className = "w-full h-24 object-cover rounded-lg mb-2"
+    root.appendChild(img)
+  }
+
+  const price = document.createElement("div")
+  price.textContent = `KES ${listing.price.toLocaleString()}`
+  price.className = "font-bold text-gray-900 text-sm"
+  root.appendChild(price)
+
+  const title = document.createElement("div")
+  title.textContent = listing.title
+  title.className = "text-xs text-gray-600 truncate mt-0.5"
+  root.appendChild(title)
+
+  const loc = document.createElement("div")
+  loc.textContent = [listing.neighbourhood, listing.city].filter(Boolean).join(", ")
+  loc.className = "text-xs text-gray-400 mt-0.5"
+  root.appendChild(loc)
+
+  return root
+}
 
 export function MapView({ listings }: MapViewProps) {
-  const hasToken = TOKEN && !TOKEN.startsWith("pk.eyJ1Ijoi...")
+  const containerRef = useRef<HTMLDivElement>(null)
+  const mapRef = useRef<MapboxMap | null>(null)
+  const markersRef = useRef<MapboxMarker[]>([])
+  const [mapReady, setMapReady] = useState(false)
 
-  if (!hasToken) {
+  // Create the map once
+  useEffect(() => {
+    if (!TOKEN || !containerRef.current || mapRef.current) return
+    let cancelled = false
+
+    import("mapbox-gl").then(({ default: mapboxgl }) => {
+      if (cancelled || !containerRef.current || mapRef.current) return
+      mapboxgl.accessToken = TOKEN
+      const map = new mapboxgl.Map({
+        container: containerRef.current,
+        style: "mapbox://styles/mapbox/streets-v12",
+        center: NAIROBI,
+        zoom: 11,
+      })
+      map.addControl(new mapboxgl.NavigationControl({ showCompass: false }), "top-right")
+      mapRef.current = map
+      map.on("load", () => setMapReady(true))
+    })
+
+    return () => {
+      cancelled = true
+      mapRef.current?.remove()
+      mapRef.current = null
+    }
+  }, [])
+
+  // Sync markers whenever results change
+  useEffect(() => {
+    const map = mapRef.current
+    if (!map || !mapReady) return
+    let cancelled = false
+
+    import("mapbox-gl").then(({ default: mapboxgl }) => {
+      if (cancelled) return
+
+      markersRef.current.forEach((m) => m.remove())
+      markersRef.current = []
+
+      const located = listings.filter((l) => l.lat !== null && l.lng !== null)
+      if (located.length === 0) return
+
+      const bounds = new mapboxgl.LngLatBounds()
+
+      for (const listing of located) {
+        const el = document.createElement("div")
+        el.className =
+          "bg-white text-gray-900 text-xs font-bold px-2.5 py-1 rounded-full shadow-md border border-gray-200 cursor-pointer hover:bg-brand-600 hover:text-white hover:border-brand-600 transition-colors"
+        el.textContent = compactPrice(listing.price)
+
+        const popup = new mapboxgl.Popup({ offset: 18, closeButton: false, maxWidth: "240px" })
+          .setDOMContent(buildPopupContent(listing))
+
+        const marker = new mapboxgl.Marker({ element: el })
+          .setLngLat([listing.lng!, listing.lat!])
+          .setPopup(popup)
+          .addTo(map)
+
+        markersRef.current.push(marker)
+        bounds.extend([listing.lng!, listing.lat!])
+      }
+
+      map.fitBounds(bounds, { padding: 60, maxZoom: 15, duration: 600 })
+    })
+
+    return () => { cancelled = true }
+  }, [listings, mapReady])
+
+  if (!TOKEN) {
     return (
-      <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-slate-100 to-brand-50 relative overflow-hidden">
-        {/* Fake map grid */}
-        <svg className="absolute inset-0 w-full h-full opacity-20" xmlns="http://www.w3.org/2000/svg">
-          <defs>
-            <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
-              <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#4d94ff" strokeWidth="0.5"/>
-            </pattern>
-          </defs>
-          <rect width="100%" height="100%" fill="url(#grid)" />
-        </svg>
-
-        {/* Fake road lines */}
-        <svg className="absolute inset-0 w-full h-full opacity-15" xmlns="http://www.w3.org/2000/svg">
-          <line x1="0" y1="35%" x2="100%" y2="35%" stroke="#0056ce" strokeWidth="3"/>
-          <line x1="0" y1="65%" x2="100%" y2="65%" stroke="#0056ce" strokeWidth="2"/>
-          <line x1="30%" y1="0" x2="30%" y2="100%" stroke="#0056ce" strokeWidth="3"/>
-          <line x1="70%" y1="0" x2="70%" y2="100%" stroke="#0056ce" strokeWidth="2"/>
-          <line x1="55%" y1="0" x2="55%" y2="100%" stroke="#0056ce" strokeWidth="1"/>
-          <line x1="0" y1="50%" x2="100%" y2="50%" stroke="#0056ce" strokeWidth="1"/>
-        </svg>
-
-        {/* Fake location pins */}
-        {listings.slice(0, 6).map((_, i) => (
-          <div
-            key={i}
-            className="absolute"
-            style={{
-              left: `${20 + (i % 3) * 25 + Math.sin(i) * 8}%`,
-              top: `${25 + Math.floor(i / 3) * 30 + Math.cos(i) * 8}%`,
-            }}
-          >
-            <div className="bg-brand-600 text-white text-xs font-bold px-2 py-0.5 rounded-full shadow-md">
-              KES
-            </div>
-            <div className="w-2 h-2 bg-brand-600 rounded-full mx-auto mt-0.5" />
-          </div>
-        ))}
-
-        {/* Center message */}
-        <div className="relative z-10 text-center bg-white/90 backdrop-blur-sm rounded-2xl px-8 py-6 shadow-lg border border-white">
+      <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-slate-100 to-brand-50">
+        <div className="text-center bg-white/90 backdrop-blur-sm rounded-2xl px-8 py-6 shadow-lg border border-white">
           <div className="w-12 h-12 rounded-xl bg-brand-100 flex items-center justify-center mx-auto mb-3">
             <MapPin className="w-6 h-6 text-brand-600" />
           </div>
-          <p className="font-semibold text-gray-800 mb-1">Map view</p>
-          <p className="text-sm text-gray-500 max-w-[200px]">
-            Add your Mapbox token in <code className="text-xs bg-gray-100 px-1 rounded">.env.local</code> to enable the map
+          <p className="font-semibold text-gray-800 mb-1">Map unavailable</p>
+          <p className="text-sm text-gray-500 max-w-[220px]">
+            Set <code className="text-xs bg-gray-100 px-1 rounded">NEXT_PUBLIC_MAPBOX_TOKEN</code> to enable the map.
           </p>
         </div>
       </div>
     )
   }
 
+  const unlocatedCount = listings.filter((l) => l.lat === null || l.lng === null).length
+
   return (
-    <div className="w-full h-full flex items-center justify-center bg-gray-100">
-      <p className="text-gray-500">Map loading…</p>
+    <div className="relative w-full h-full">
+      <div ref={containerRef} className="w-full h-full" />
+      {unlocatedCount > 0 && (
+        <div className="absolute bottom-3 left-3 bg-white/95 text-xs text-gray-600 rounded-lg shadow px-3 py-1.5">
+          {unlocatedCount} listing{unlocatedCount > 1 ? "s" : ""} without a map location
+        </div>
+      )}
     </div>
   )
 }
