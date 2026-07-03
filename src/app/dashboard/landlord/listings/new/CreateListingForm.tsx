@@ -195,7 +195,7 @@ export function CreateListingForm({ amenities }: { amenities: Amenity[] }) {
                 {KENYA_CITIES.map((c) => <option key={c} value={c}>{c}</option>)}
               </select>
             </div>
-            {watchedCity === "Nairobi" && (
+            {watchedCity === "Nairobi" ? (
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Neighbourhood (optional)</label>
                 <select
@@ -206,6 +206,12 @@ export function CreateListingForm({ amenities }: { amenities: Amenity[] }) {
                   {NAIROBI_NEIGHBOURHOODS.map((n) => <option key={n} value={n}>{n}</option>)}
                 </select>
               </div>
+            ) : (
+              <Input
+                {...register("neighbourhood")}
+                label="Neighbourhood / area (optional)"
+                placeholder="e.g. Nyali, Milimani, Section 58"
+              />
             )}
             <Input
               {...register("address")}

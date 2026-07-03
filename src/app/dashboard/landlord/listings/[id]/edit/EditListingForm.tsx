@@ -182,7 +182,7 @@ export function EditListingForm({ listing, allAmenities }: { listing: EditableLi
               {KENYA_CITIES.map((c) => <option key={c} value={c}>{c}</option>)}
             </select>
           </div>
-          {watchedCity === "Nairobi" && (
+          {watchedCity === "Nairobi" ? (
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Neighbourhood</label>
               <select {...register("neighbourhood")} className={inputCls}>
@@ -190,6 +190,12 @@ export function EditListingForm({ listing, allAmenities }: { listing: EditableLi
                 {NAIROBI_NEIGHBOURHOODS.map((n) => <option key={n} value={n}>{n}</option>)}
               </select>
             </div>
+          ) : (
+            <Input
+              {...register("neighbourhood")}
+              label="Neighbourhood / area"
+              placeholder="e.g. Nyali, Milimani, Section 58"
+            />
           )}
         </div>
         <Input {...register("address")} label="Street address" error={errors.address?.message} />

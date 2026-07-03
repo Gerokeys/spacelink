@@ -109,13 +109,8 @@ export function ListingCard({ listing, onSave, className, compact = false }: Lis
             </Badge>
           </div>
 
-          {/* Tour/Video badges top-right (leave space for save button) */}
+          {/* Video badge top-right (leave space for save button) */}
           <div className="absolute top-3 right-12 flex gap-1">
-            {listing.hasTour360 && (
-              <span className="bg-black/70 text-white text-xs px-1.5 py-0.5 rounded font-medium backdrop-blur-sm">
-                360°
-              </span>
-            )}
             {listing.hasVideo && (
               <span className="bg-black/70 text-white text-xs px-1.5 py-0.5 rounded font-medium flex items-center gap-0.5 backdrop-blur-sm">
                 <Video className="w-3 h-3" /> Video

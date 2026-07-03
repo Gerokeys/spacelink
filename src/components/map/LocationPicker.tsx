@@ -6,7 +6,9 @@ import { Search, Loader2, MapPin, X } from "lucide-react"
 import type { Map as MapboxMap, Marker as MapboxMarker } from "mapbox-gl"
 
 const TOKEN = process.env.NEXT_PUBLIC_MAPBOX_TOKEN
-const NAIROBI: [number, number] = [36.8172, -1.2864]
+// Kenya-wide default view
+const KENYA_CENTER: [number, number] = [37.9, 0.2]
+const KENYA_ZOOM = 5.6
 
 interface GeocodeResult {
   id: string
@@ -43,12 +45,12 @@ export function LocationPicker({ lat, lng, onChange, searchHint }: LocationPicke
       if (cancelled || !containerRef.current || mapRef.current) return
       mapboxgl.accessToken = TOKEN
 
-      const start: [number, number] = lng !== null && lat !== null ? [lng, lat] : NAIROBI
+      const start: [number, number] = lng !== null && lat !== null ? [lng, lat] : KENYA_CENTER
       const map = new mapboxgl.Map({
         container: containerRef.current,
         style: "mapbox://styles/mapbox/streets-v12",
         center: start,
-        zoom: lng !== null && lat !== null ? 15 : 11,
+        zoom: lng !== null && lat !== null ? 15 : KENYA_ZOOM,
       })
       map.addControl(new mapboxgl.NavigationControl({ showCompass: false }), "top-right")
       mapRef.current = map
@@ -133,7 +135,7 @@ export function LocationPicker({ lat, lng, onChange, searchHint }: LocationPicke
                 search()
               }
             }}
-            placeholder="Search address or place, e.g. Westlands, Nairobi"
+            placeholder="Search any place in Kenya, e.g. Nyali, Mombasa"
             className="flex-1 rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
           />
           <button

@@ -23,7 +23,6 @@ function parseFiltersFromUrl(searchParams: URLSearchParams): SearchFilters {
     minBedrooms: searchParams.get("minBedrooms") ? Number(searchParams.get("minBedrooms")) : undefined,
     furnished: searchParams.get("furnished") === "true" ? true : undefined,
     petsAllowed: searchParams.get("petsAllowed") === "true" ? true : undefined,
-    hasVirtualTour: searchParams.get("hasVirtualTour") === "true" ? true : undefined,
     sortBy: (searchParams.get("sortBy") as SearchFilters["sortBy"]) ?? "newest",
     page: searchParams.get("page") ? Number(searchParams.get("page")) : 1,
   }
@@ -42,7 +41,6 @@ function filtersToParams(filters: SearchFilters): URLSearchParams {
   if (filters.minBedrooms !== undefined) params.set("minBedrooms", String(filters.minBedrooms))
   if (filters.furnished) params.set("furnished", "true")
   if (filters.petsAllowed) params.set("petsAllowed", "true")
-  if (filters.hasVirtualTour) params.set("hasVirtualTour", "true")
   if (filters.sortBy && filters.sortBy !== "newest") params.set("sortBy", filters.sortBy)
   if (filters.page && filters.page > 1) params.set("page", String(filters.page))
   return params

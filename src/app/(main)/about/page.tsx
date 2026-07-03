@@ -21,8 +21,8 @@ const VALUES = [
   },
   {
     icon: MapPin,
-    title: "Search that understands Nairobi",
-    text: "Filter by neighbourhood, budget, and amenities — with real map locations for every listing.",
+    title: "Search that understands Kenya",
+    text: "Filter by city, neighbourhood, budget, and amenities — with real map locations for every listing.",
   },
   {
     icon: MessageSquare,

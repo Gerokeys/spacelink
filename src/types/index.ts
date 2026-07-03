@@ -165,7 +165,13 @@ export type ApiResponse<T> = ApiSuccess<T> | ApiError
 
 export const KENYA_CITIES = [
   "Nairobi", "Mombasa", "Kisumu", "Nakuru", "Eldoret",
-  "Thika", "Malindi", "Kitale", "Garissa", "Kakamega",
+  "Thika", "Ruiru", "Kiambu", "Juja", "Ongata Rongai",
+  "Ngong", "Athi River", "Machakos", "Kitengela", "Naivasha",
+  "Nyeri", "Meru", "Embu", "Kericho", "Kisii",
+  "Kakamega", "Bungoma", "Busia", "Kitale", "Kapsabet",
+  "Nanyuki", "Isiolo", "Narok", "Kilifi", "Malindi",
+  "Mtwapa", "Diani", "Voi", "Lamu", "Garissa",
+  "Homa Bay", "Migori", "Kerugoya", "Karatina", "Wote",
 ] as const
 
 export const NAIROBI_NEIGHBOURHOODS = [

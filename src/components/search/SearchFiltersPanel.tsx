@@ -38,7 +38,6 @@ export function SearchFiltersPanel({ filters, onChange, resultCount }: SearchFil
     filters.minBedrooms,
     filters.furnished,
     filters.petsAllowed,
-    filters.hasVirtualTour,
     filters.neighbourhood,
   ].filter(Boolean).length
 
@@ -127,8 +126,8 @@ export function SearchFiltersPanel({ filters, onChange, resultCount }: SearchFil
         </select>
       </div>
 
-      {/* Neighbourhood (only Nairobi for now) */}
-      {filters.city === "Nairobi" && (
+      {/* Neighbourhood — Nairobi gets a dropdown, other cities free text */}
+      {filters.city === "Nairobi" ? (
         <div>
           <label className="block text-sm font-semibold text-gray-700 mb-2">Neighbourhood</label>
           <select
@@ -142,7 +141,21 @@ export function SearchFiltersPanel({ filters, onChange, resultCount }: SearchFil
             ))}
           </select>
         </div>
-      )}
+      ) : filters.city ? (
+        <div>
+          <label className="block text-sm font-semibold text-gray-700 mb-2">Neighbourhood / area</label>
+          <input
+            type="text"
+            defaultValue={filters.neighbourhood ?? ""}
+            placeholder="e.g. Nyali, Milimani"
+            onBlur={(e) => update({ neighbourhood: e.target.value || undefined })}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") update({ neighbourhood: e.currentTarget.value || undefined })
+            }}
+            className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
+          />
+        </div>
+      ) : null}
 
       {/* Toggle filters */}
       <div>
@@ -151,7 +164,6 @@ export function SearchFiltersPanel({ filters, onChange, resultCount }: SearchFil
           {[
             { key: "furnished" as const, label: "Furnished" },
             { key: "petsAllowed" as const, label: "Pet friendly" },
-            { key: "hasVirtualTour" as const, label: "Virtual tour available" },
           ].map(({ key, label }) => (
             <label key={key} className="flex items-center gap-3 cursor-pointer">
               <input

@@ -1,7 +1,7 @@
 import Link from "next/link"
 import {
   ArrowRight, MapPin, Shield, Zap, Home, Building2, Store, Moon,
-  CheckCircle, Video, Map, MessageCircle, Star, Clock, BadgeCheck,
+  CheckCircle, Map, MessageCircle, Star, Clock, BadgeCheck,
   TrendingUp,
 } from "lucide-react"
 import { SearchBar } from "@/components/search/SearchBar"
@@ -54,6 +54,11 @@ const PROPERTY_TYPES = [
   { label: "Short-term", icon: Moon, href: "/search?type=SHORT_TERM" },
 ]
 
+const POPULAR_CITIES = [
+  "Nairobi", "Mombasa", "Kisumu", "Nakuru", "Eldoret",
+  "Thika", "Naivasha", "Nyeri", "Machakos", "Kilifi",
+]
+
 const NAIROBI_AREAS = [
   { name: "Westlands", slug: "Westlands" },
   { name: "Kilimani", slug: "Kilimani" },
@@ -72,9 +77,9 @@ const FEATURES = [
     desc: "Every landlord goes through an ID verification process. No fake listings, no wasted viewings.",
   },
   {
-    icon: Video,
-    title: "Virtual 360° tours",
-    desc: "Explore every room before you visit in person. Save time and only view properties you love.",
+    icon: Clock,
+    title: "Fast, direct responses",
+    desc: "See each landlord's response rate before you reach out, and hear back quickly — no middlemen.",
   },
   {
     icon: Map,
@@ -90,7 +95,7 @@ const FEATURES = [
 
 const TENANT_BENEFITS = [
   "Browse hundreds of verified listings for free",
-  "See 360° virtual tours before visiting",
+  "See real photos and exact map locations before visiting",
   "Send inquiries directly — no agent fees",
   "Search on a map and filter by what matters to you",
   "Know if you qualify before you apply",
@@ -100,7 +105,7 @@ const LANDLORD_BENEFITS = [
   "List your property for free in minutes",
   "Reach thousands of verified tenants",
   "Manage all inquiries from one dashboard",
-  "Upload photos and virtual tours",
+  "Upload photos and pin your exact location on the map",
   "Get notified by email when tenants inquire",
 ]
 
@@ -133,8 +138,8 @@ export default async function HomePage() {
             </div>
             <div className="flex items-center justify-center gap-6 mt-6 text-sm text-stone-400 flex-wrap">
               <span className="flex items-center gap-1.5"><Shield className="w-3.5 h-3.5 text-brand-400" /> Verified landlords</span>
-              <span className="flex items-center gap-1.5"><Zap className="w-3.5 h-3.5 text-brand-400" /> Virtual tours</span>
-              <span className="flex items-center gap-1.5"><MapPin className="w-3.5 h-3.5 text-brand-400" /> Nairobi · Mombasa · Kisumu</span>
+              <span className="flex items-center gap-1.5"><Zap className="w-3.5 h-3.5 text-brand-400" /> Free for tenants</span>
+              <span className="flex items-center gap-1.5"><MapPin className="w-3.5 h-3.5 text-brand-400" /> All across Kenya</span>
             </div>
           </div>
         </div>
@@ -262,18 +267,32 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* ── Neighbourhoods ── */}
+      {/* ── Browse by location ── */}
       <section className="bg-white border-y border-stone-200 py-12">
         <div className="container mx-auto px-4">
           <div className="flex items-end justify-between mb-6">
-            <h2 className="text-2xl font-bold text-stone-900">Browse by neighbourhood</h2>
-            <Link href="/search?city=Nairobi" className="text-sm text-brand-600 hover:text-brand-700 font-medium flex items-center gap-1">
-              All areas <ArrowRight className="w-3.5 h-3.5" />
+            <h2 className="text-2xl font-bold text-stone-900">Browse by location</h2>
+            <Link href="/search" className="text-sm text-brand-600 hover:text-brand-700 font-medium flex items-center gap-1">
+              All of Kenya <ArrowRight className="w-3.5 h-3.5" />
             </Link>
           </div>
+
+          <h3 className="text-sm font-medium text-stone-500 mb-3">Cities & towns</h3>
+          <div className="flex flex-wrap gap-2 mb-8">
+            {POPULAR_CITIES.map((city) => (
+              <Link key={city} href={`/search?city=${encodeURIComponent(city)}`}
+                className="flex items-center gap-1.5 px-4 py-2 rounded-full border border-stone-200 bg-stone-50 text-sm text-stone-700 hover:border-brand-400 hover:text-brand-600 transition-colors"
+              >
+                <MapPin className="w-3.5 h-3.5" />
+                {city}
+              </Link>
+            ))}
+          </div>
+
+          <h3 className="text-sm font-medium text-stone-500 mb-3">Popular Nairobi neighbourhoods</h3>
           <div className="flex flex-wrap gap-2">
             {NAIROBI_AREAS.map((area) => (
-              <Link key={area.slug} href={`/search?neighbourhood=${area.slug}`}
+              <Link key={area.slug} href={`/search?city=Nairobi&neighbourhood=${encodeURIComponent(area.slug)}`}
                 className="flex items-center gap-1.5 px-4 py-2 rounded-full border border-stone-200 bg-stone-50 text-sm text-stone-700 hover:border-brand-400 hover:text-brand-600 transition-colors"
               >
                 <MapPin className="w-3.5 h-3.5" />
@@ -316,7 +335,7 @@ export default async function HomePage() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {[
               { step: "01", title: "Search", desc: "Filter by location, price, type and amenities. View on a map or as a list.", icon: Map },
-              { step: "02", title: "Explore virtually", desc: "View 360° photo tours and video walkthroughs before visiting.", icon: Video },
+              { step: "02", title: "Explore the details", desc: "Browse photos, amenities and the exact map location before visiting.", icon: MapPin },
               { step: "03", title: "Contact directly", desc: "Send an inquiry straight to the landlord. No agents, no middlemen.", icon: MessageCircle },
             ].map(({ step, title, desc, icon: Icon }) => (
               <div key={step} className="flex gap-4">

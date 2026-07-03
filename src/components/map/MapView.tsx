@@ -22,7 +22,9 @@ interface MapViewProps {
 }
 
 const TOKEN = process.env.NEXT_PUBLIC_MAPBOX_TOKEN
-const NAIROBI: [number, number] = [36.8172, -1.2864]
+// Kenya-wide default view
+const KENYA_CENTER: [number, number] = [37.9, 0.2]
+const KENYA_ZOOM = 5.6
 
 function compactPrice(price: number): string {
   if (price >= 1_000_000) return `${(price / 1_000_000).toFixed(1).replace(/\.0$/, "")}M`
@@ -90,8 +92,8 @@ export function MapView({ listings, onBoundsChange, boundsActive = false }: MapV
       const map = new mapboxgl.Map({
         container: containerRef.current,
         style: "mapbox://styles/mapbox/streets-v12",
-        center: NAIROBI,
-        zoom: 11,
+        center: KENYA_CENTER,
+        zoom: KENYA_ZOOM,
       })
       map.addControl(new mapboxgl.NavigationControl({ showCompass: false }), "top-right")
       mapRef.current = map

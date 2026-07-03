@@ -11,8 +11,8 @@ export const metadata: Metadata = {
     template: "%s | SpaceLink",
   },
   description:
-    "Discover residential, office, and commercial spaces across Kenya. Virtual tours, verified listings, and smart search.",
-  keywords: ["property Kenya", "houses for rent Nairobi", "office space Kenya", "commercial property"],
+    "Discover residential, office, and commercial spaces across Kenya. Verified listings, map search, and direct contact with landlords.",
+  keywords: ["property Kenya", "houses for rent Kenya", "houses for rent Nairobi", "office space Kenya", "commercial property Kenya"],
   openGraph: {
     type: "website",
     locale: "en_KE",

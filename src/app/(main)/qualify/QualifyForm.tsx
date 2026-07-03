@@ -7,10 +7,11 @@ import { Button } from "@/components/ui/button"
 import { ListingCard } from "@/components/listings/ListingCard"
 import { formatPrice } from "@/lib/utils"
 import { cn } from "@/lib/utils"
+import { KENYA_CITIES } from "@/types"
 import type { ListingCard as ListingCardType } from "@/types"
 import Link from "next/link"
 
-const CITIES = ["Nairobi", "Mombasa", "Kisumu", "Nakuru", "Eldoret", "Thika", "Nyeri"]
+const CITIES = KENYA_CITIES
 
 const PROPERTY_TYPES = [
   { value: "RESIDENTIAL", label: "Residential", desc: "Apartment, house, bedsitter", icon: Home },
