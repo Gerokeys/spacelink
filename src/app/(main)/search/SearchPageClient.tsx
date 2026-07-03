@@ -1,15 +1,15 @@
 "use client"
 
-import { useState, useEffect, useCallback } from "react"
+import { useState, useEffect, useCallback, useRef } from "react"
 import { useSearchParams, useRouter } from "next/navigation"
 import { useQuery } from "@tanstack/react-query"
 import { LayoutList, Map, SlidersHorizontal, X } from "lucide-react"
 import { ListingCard } from "@/components/listings/ListingCard"
 import { SearchBar } from "@/components/search/SearchBar"
 import { SearchFiltersPanel } from "@/components/search/SearchFiltersPanel"
-import { MapView } from "@/components/map/MapView"
+import { MapView, type MapBounds } from "@/components/map/MapView"
 import { Button } from "@/components/ui/button"
-import { buildSearchParams, cn } from "@/lib/utils"
+import { cn } from "@/lib/utils"
 import type { SearchFilters, SearchResult, ListingType } from "@/types"
 
 function parseFiltersFromUrl(searchParams: URLSearchParams): SearchFilters {
@@ -29,8 +29,30 @@ function parseFiltersFromUrl(searchParams: URLSearchParams): SearchFilters {
   }
 }
 
-async function fetchListings(filters: SearchFilters): Promise<SearchResult> {
-  const params = buildSearchParams(filters as Record<string, unknown>)
+// Canonical serialization. The API reads the text query as `q`, so the
+// `query` field must be mapped — this mismatch is what broke location search.
+function filtersToParams(filters: SearchFilters): URLSearchParams {
+  const params = new URLSearchParams()
+  if (filters.query) params.set("q", filters.query)
+  if (filters.type && !Array.isArray(filters.type)) params.set("type", filters.type)
+  if (filters.city) params.set("city", filters.city)
+  if (filters.neighbourhood) params.set("neighbourhood", filters.neighbourhood)
+  if (filters.minPrice !== undefined) params.set("minPrice", String(filters.minPrice))
+  if (filters.maxPrice !== undefined) params.set("maxPrice", String(filters.maxPrice))
+  if (filters.minBedrooms !== undefined) params.set("minBedrooms", String(filters.minBedrooms))
+  if (filters.furnished) params.set("furnished", "true")
+  if (filters.petsAllowed) params.set("petsAllowed", "true")
+  if (filters.hasVirtualTour) params.set("hasVirtualTour", "true")
+  if (filters.sortBy && filters.sortBy !== "newest") params.set("sortBy", filters.sortBy)
+  if (filters.page && filters.page > 1) params.set("page", String(filters.page))
+  return params
+}
+
+async function fetchListings(filters: SearchFilters, bounds: MapBounds | null): Promise<SearchResult> {
+  const params = filtersToParams(filters)
+  if (bounds) {
+    params.set("bounds", `${bounds.west},${bounds.south},${bounds.east},${bounds.north}`)
+  }
   const res = await fetch(`/api/search?${params}`)
   if (!res.ok) throw new Error("Search failed")
   const json = await res.json()
@@ -44,18 +66,32 @@ export function SearchPageClient() {
   const router = useRouter()
   const [viewMode, setViewMode] = useState<ViewMode>("list")
   const [showFilters, setShowFilters] = useState(false)
+  const [bounds, setBounds] = useState<MapBounds | null>(null)
   const [filters, setFilters] = useState<SearchFilters>(() =>
     parseFiltersFromUrl(searchParams)
   )
+  const filtersRef = useRef(filters)
+  filtersRef.current = filters
 
+  // URL → state: react when the SearchBar (or back button) changes the URL
   useEffect(() => {
-    const params = buildSearchParams(filters as Record<string, unknown>)
-    router.replace(`/search?${params}`, { scroll: false })
-  }, [filters, router])
+    const parsed = parseFiltersFromUrl(searchParams)
+    if (filtersToParams(parsed).toString() !== filtersToParams(filtersRef.current).toString()) {
+      setFilters(parsed)
+    }
+  }, [searchParams])
+
+  // State → URL: keep the address bar shareable
+  useEffect(() => {
+    const canonical = filtersToParams(filters).toString()
+    if (canonical !== searchParams.toString()) {
+      router.replace(`/search${canonical ? `?${canonical}` : ""}`, { scroll: false })
+    }
+  }, [filters, router, searchParams])
 
   const { data, isLoading, isError } = useQuery({
-    queryKey: ["search", filters],
-    queryFn: () => fetchListings(filters),
+    queryKey: ["search", filtersToParams(filters).toString(), bounds],
+    queryFn: () => fetchListings(filters, bounds),
     placeholderData: (prev) => prev,
   })
 
@@ -64,6 +100,12 @@ export function SearchPageClient() {
 
   const handleFiltersChange = useCallback((newFilters: SearchFilters) => {
     setFilters(newFilters)
+  }, [])
+
+  // User panned/zoomed the map → filter results to the visible area
+  const handleBoundsChange = useCallback((newBounds: MapBounds | null) => {
+    setBounds(newBounds)
+    setFilters((f) => ({ ...f, page: 1 }))
   }, [])
 
   return (
@@ -80,13 +122,23 @@ export function SearchPageClient() {
 
       {/* Results bar */}
       <div className="border-b border-gray-200 bg-white px-4 py-2.5 flex items-center justify-between gap-4 shrink-0">
-        <p className="text-sm text-gray-600">
-          {isLoading ? (
-            <span className="inline-block w-24 h-4 bg-gray-200 rounded animate-pulse" />
-          ) : (
-            <><strong className="text-gray-900">{total.toLocaleString()}</strong> spaces found</>
+        <div className="flex items-center gap-2 min-w-0">
+          <p className="text-sm text-gray-600 truncate">
+            {isLoading ? (
+              <span className="inline-block w-24 h-4 bg-gray-200 rounded animate-pulse" />
+            ) : (
+              <><strong className="text-gray-900">{total.toLocaleString()}</strong> spaces found</>
+            )}
+          </p>
+          {bounds && (
+            <button
+              onClick={() => handleBoundsChange(null)}
+              className="flex items-center gap-1 text-xs bg-brand-50 text-brand-700 border border-brand-200 rounded-full px-2.5 py-1 hover:bg-brand-100 transition-colors shrink-0"
+            >
+              Map area <X className="w-3 h-3" />
+            </button>
           )}
-        </p>
+        </div>
 
         <div className="flex items-center gap-2">
           {/* Mobile filters toggle */}
@@ -94,9 +146,9 @@ export function SearchPageClient() {
             variant="outline"
             size="sm"
             className="lg:hidden flex items-center gap-1.5"
-            onClick={() => setShowFilters((v) => !v)}
+            onClick={() => setShowFilters(true)}
           >
-            {showFilters ? <X className="w-4 h-4" /> : <SlidersHorizontal className="w-4 h-4" />}
+            <SlidersHorizontal className="w-4 h-4" />
             Filters
           </Button>
 
@@ -124,27 +176,39 @@ export function SearchPageClient() {
         </div>
       </div>
 
+      {/* Mobile filters drawer */}
+      {showFilters && (
+        <div className="fixed inset-0 z-50 flex lg:hidden">
+          <div className="absolute inset-0 bg-black/40" onClick={() => setShowFilters(false)} />
+          <div className="relative ml-auto w-80 max-w-[85vw] h-full bg-white flex flex-col">
+            <div className="border-b border-gray-200 px-5 py-4 flex items-center justify-between shrink-0">
+              <h2 className="font-semibold text-gray-900">Filters</h2>
+              <button onClick={() => setShowFilters(false)} aria-label="Close filters">
+                <X className="w-5 h-5 text-gray-500" />
+              </button>
+            </div>
+            <div className="flex-1 overflow-y-auto p-5">
+              <SearchFiltersPanel
+                filters={filters}
+                onChange={handleFiltersChange}
+                resultCount={total}
+              />
+            </div>
+            <div className="border-t border-gray-200 p-4 shrink-0">
+              <Button className="w-full" onClick={() => setShowFilters(false)}>
+                Show {total.toLocaleString()} results
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Main content — split layout */}
       <div className="flex flex-1 overflow-hidden">
-
-        {/* Mobile filters drawer backdrop */}
-        {showFilters && (
-          <div
-            className="fixed inset-0 z-30 bg-black/40 lg:hidden"
-            onClick={() => setShowFilters(false)}
-          />
-        )}
-
         {/* Left panel — filters + listings */}
         <div className="flex flex-1 overflow-hidden min-w-0">
-          {/* Filters sidebar — desktop: inline, mobile: slide-in drawer */}
-          <div className={cn(
-            "shrink-0 border-r border-stone-200 bg-white overflow-y-auto transition-transform",
-            "w-72",
-            showFilters
-              ? "fixed inset-y-0 left-0 z-40 shadow-xl lg:relative lg:shadow-none lg:translate-x-0"
-              : "hidden lg:block"
-          )}>
+          {/* Filters sidebar — desktop only; mobile uses the drawer above */}
+          <div className="hidden lg:block w-72 shrink-0 border-r border-gray-200 bg-white overflow-y-auto">
             <div className="p-4">
               <SearchFiltersPanel
                 filters={filters}
@@ -188,7 +252,11 @@ export function SearchPageClient() {
                 <div className="text-center py-24 text-gray-400">
                   <Map className="w-12 h-12 mx-auto mb-3 opacity-30" />
                   <p className="text-xl font-medium mb-2 text-gray-500">No results found</p>
-                  <p className="text-sm">Try adjusting your filters or search in a different area.</p>
+                  <p className="text-sm">
+                    {bounds
+                      ? "No listings in this map area. Zoom out or clear the map filter."
+                      : "Try adjusting your filters or search in a different area."}
+                  </p>
                 </div>
               ) : (
                 <div className={cn(
@@ -231,12 +299,16 @@ export function SearchPageClient() {
           </div>
         </div>
 
-        {/* Right panel — map (sticky, full height) */}
+        {/* Right panel — map */}
         <div className={cn(
           "shrink-0 border-l border-gray-200",
           viewMode === "list" ? "hidden xl:block xl:w-[45%]" : "flex-1"
         )}>
-          <MapView listings={listings} />
+          <MapView
+            listings={listings}
+            onBoundsChange={handleBoundsChange}
+            boundsActive={!!bounds}
+          />
         </div>
       </div>
     </div>

@@ -6,8 +6,19 @@ import { MapPin } from "lucide-react"
 import type { Map as MapboxMap, Marker as MapboxMarker } from "mapbox-gl"
 import type { ListingCard } from "@/types"
 
+export interface MapBounds {
+  west: number
+  south: number
+  east: number
+  north: number
+}
+
 interface MapViewProps {
   listings: ListingCard[]
+  /** Called with the visible area when the user pans/zooms, or null to clear */
+  onBoundsChange?: (bounds: MapBounds | null) => void
+  /** True while results are being filtered to the map viewport */
+  boundsActive?: boolean
 }
 
 const TOKEN = process.env.NEXT_PUBLIC_MAPBOX_TOKEN
@@ -51,11 +62,19 @@ function buildPopupContent(listing: ListingCard): HTMLElement {
   return root
 }
 
-export function MapView({ listings }: MapViewProps) {
+export function MapView({ listings, onBoundsChange, boundsActive = false }: MapViewProps) {
   const containerRef = useRef<HTMLDivElement>(null)
   const mapRef = useRef<MapboxMap | null>(null)
   const markersRef = useRef<MapboxMarker[]>([])
   const [mapReady, setMapReady] = useState(false)
+
+  // Refs so the map's event handlers always see current values
+  const onBoundsChangeRef = useRef(onBoundsChange)
+  onBoundsChangeRef.current = onBoundsChange
+  const boundsActiveRef = useRef(boundsActive)
+  boundsActiveRef.current = boundsActive
+  // Set true around our own fitBounds so it isn't mistaken for a user move
+  const programmaticMoveRef = useRef(false)
 
   // Create the map once
   useEffect(() => {
@@ -74,6 +93,23 @@ export function MapView({ listings }: MapViewProps) {
       map.addControl(new mapboxgl.NavigationControl({ showCompass: false }), "top-right")
       mapRef.current = map
       map.on("load", () => setMapReady(true))
+
+      // Zillow-style: panning/zooming filters results to the visible area
+      map.on("moveend", () => {
+        if (programmaticMoveRef.current) {
+          programmaticMoveRef.current = false
+          return
+        }
+        const b = map.getBounds()
+        if (b) {
+          onBoundsChangeRef.current?.({
+            west: b.getWest(),
+            south: b.getSouth(),
+            east: b.getEast(),
+            north: b.getNorth(),
+          })
+        }
+      })
     })
 
     return () => {
@@ -98,6 +134,7 @@ export function MapView({ listings }: MapViewProps) {
       const located = listings.filter((l) => l.lat !== null && l.lng !== null)
       if (located.length === 0) return
 
+      const shouldFit = !boundsActiveRef.current
       const bounds = new mapboxgl.LngLatBounds()
 
       for (const listing of located) {
@@ -118,7 +155,11 @@ export function MapView({ listings }: MapViewProps) {
         bounds.extend([listing.lng!, listing.lat!])
       }
 
-      map.fitBounds(bounds, { padding: 60, maxZoom: 15, duration: 600 })
+      // Don't move the camera while the user is driving the viewport filter
+      if (shouldFit) {
+        programmaticMoveRef.current = true
+        map.fitBounds(bounds, { padding: 60, maxZoom: 15, duration: 600 })
+      }
     })
 
     return () => { cancelled = true }

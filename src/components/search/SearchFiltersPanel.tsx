@@ -1,7 +1,5 @@
 "use client"
 
-import { useState } from "react"
-import { X, SlidersHorizontal } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import { LISTING_TYPE_LABELS, KENYA_CITIES, NAIROBI_NEIGHBOURHOODS } from "@/types"
@@ -32,8 +30,6 @@ const BEDROOM_OPTIONS = [
 ]
 
 export function SearchFiltersPanel({ filters, onChange, resultCount }: SearchFiltersPanelProps) {
-  const [mobileOpen, setMobileOpen] = useState(false)
-
   const update = (patch: Partial<SearchFilters>) => onChange({ ...filters, ...patch, page: 1 })
 
   const activeFilterCount = [
@@ -46,8 +42,13 @@ export function SearchFiltersPanel({ filters, onChange, resultCount }: SearchFil
     filters.neighbourhood,
   ].filter(Boolean).length
 
-  const panel = (
+  return (
     <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <h2 className="font-semibold text-gray-900">Filters</h2>
+        <span className="text-sm text-gray-400">{resultCount} results</span>
+      </div>
+
       {/* Type */}
       <div>
         <label className="block text-sm font-semibold text-gray-700 mb-2">Property type</label>
@@ -191,58 +192,5 @@ export function SearchFiltersPanel({ filters, onChange, resultCount }: SearchFil
         </Button>
       )}
     </div>
-  )
-
-  return (
-    <>
-      {/* Desktop sidebar */}
-      <aside className="hidden lg:block w-72 shrink-0">
-        <div className="sticky top-20 bg-white border border-gray-200 rounded-xl p-5">
-          <div className="flex items-center justify-between mb-5">
-            <h2 className="font-semibold text-gray-900">Filters</h2>
-            <span className="text-sm text-gray-400">{resultCount} results</span>
-          </div>
-          {panel}
-        </div>
-      </aside>
-
-      {/* Mobile filter button + drawer */}
-      <div className="lg:hidden">
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => setMobileOpen(true)}
-          className="flex items-center gap-2"
-        >
-          <SlidersHorizontal className="w-4 h-4" />
-          Filters
-          {activeFilterCount > 0 && (
-            <span className="bg-brand-600 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">
-              {activeFilterCount}
-            </span>
-          )}
-        </Button>
-
-        {mobileOpen && (
-          <div className="fixed inset-0 z-50 flex">
-            <div className="absolute inset-0 bg-black/40" onClick={() => setMobileOpen(false)} />
-            <div className="relative ml-auto w-80 max-w-full h-full bg-white overflow-y-auto">
-              <div className="sticky top-0 bg-white border-b border-gray-200 px-5 py-4 flex items-center justify-between">
-                <h2 className="font-semibold">Filters</h2>
-                <button onClick={() => setMobileOpen(false)}>
-                  <X className="w-5 h-5 text-gray-500" />
-                </button>
-              </div>
-              <div className="p-5">{panel}</div>
-              <div className="sticky bottom-0 bg-white border-t border-gray-200 p-4">
-                <Button className="w-full" onClick={() => setMobileOpen(false)}>
-                  Show {resultCount} results
-                </Button>
-              </div>
-            </div>
-          </div>
-        )}
-      </div>
-    </>
   )
 }

@@ -83,6 +83,17 @@ export async function GET(req: NextRequest) {
     const hasVirtualTour = sp.get("hasVirtualTour") === "true"
     if (hasVirtualTour) where.tourConfig = { isNot: null }
 
+    // Map viewport filter: bounds=west,south,east,north
+    const bounds = sp.get("bounds")
+    if (bounds) {
+      const parts = bounds.split(",").map(Number)
+      if (parts.length === 4 && parts.every(Number.isFinite)) {
+        const [west, south, east, north] = parts
+        where.lat = { gte: south, lte: north }
+        where.lng = { gte: west, lte: east }
+      }
+    }
+
     const [listings, total] = await Promise.all([
       db.listing.findMany({
         where,
