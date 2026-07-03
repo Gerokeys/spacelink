@@ -23,7 +23,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
 
   // Rate limit admin actions: 60 per minute per IP
   const ip = getClientIp(req)
-  const rl = checkRateLimit(`admin:${ip}`, LIMITS.ADMIN_ACTION.limit, LIMITS.ADMIN_ACTION.windowMs)
+  const rl = await checkRateLimit(`admin:${ip}`, LIMITS.ADMIN_ACTION.limit, LIMITS.ADMIN_ACTION.windowMs)
   if (!rl.allowed) return tooManyRequests(rl.resetIn)
 
   try {

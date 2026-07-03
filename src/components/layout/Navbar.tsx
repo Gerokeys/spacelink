@@ -4,7 +4,7 @@ import Link from "next/link"
 import Image from "next/image"
 import { useSession, signOut } from "next-auth/react"
 import { useState } from "react"
-import { Menu, X, Search, Heart, LayoutDashboard, Plus } from "lucide-react"
+import { Menu, X, Heart, LayoutDashboard, Plus, MessageSquare } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 
@@ -49,9 +49,14 @@ export function Navbar() {
         <div className="hidden md:flex items-center gap-2">
           {session ? (
             <>
-              <Link href="/saved">
+              <Link href="/saved" aria-label="Saved listings">
                 <Button variant="ghost" size="icon-sm">
                   <Heart className="w-4 h-4" />
+                </Button>
+              </Link>
+              <Link href="/my-inquiries" aria-label="My inquiries">
+                <Button variant="ghost" size="icon-sm">
+                  <MessageSquare className="w-4 h-4" />
                 </Button>
               </Link>
               {isAdmin && (
@@ -126,6 +131,11 @@ export function Navbar() {
                 <Link href="/saved" className="block">
                   <Button variant="outline" size="sm" className="w-full justify-start gap-2">
                     <Heart className="w-4 h-4" /> Saved
+                  </Button>
+                </Link>
+                <Link href="/my-inquiries" className="block">
+                  <Button variant="outline" size="sm" className="w-full justify-start gap-2">
+                    <MessageSquare className="w-4 h-4" /> My Inquiries
                   </Button>
                 </Link>
                 <Link href="/dashboard/landlord" className="block">

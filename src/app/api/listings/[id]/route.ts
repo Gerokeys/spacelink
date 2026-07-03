@@ -34,6 +34,7 @@ const updateListingSchema = z.object({
   furnished: z.boolean().optional(),
   // Owners may only pause/unpause an already-approved listing
   status: z.enum(["ACTIVE", "PAUSED"]).optional(),
+  amenityIds: z.array(z.string()).optional(),
 })
 
 export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
@@ -135,16 +136,25 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
       delete data.status
     }
 
+    const { amenityIds, ...fields } = data
+
     const updated = await db.listing.update({
       where: { id },
       data: {
-        ...data,
+        ...fields,
         availableFrom:
-          data.availableFrom === undefined
+          fields.availableFrom === undefined
             ? undefined
-            : data.availableFrom === null
+            : fields.availableFrom === null
               ? null
-              : new Date(data.availableFrom),
+              : new Date(fields.availableFrom),
+        // Replace the amenity set when provided
+        ...(amenityIds !== undefined && {
+          amenities: {
+            deleteMany: {},
+            create: amenityIds.map((amenityId) => ({ amenityId })),
+          },
+        }),
       },
     })
     return NextResponse.json({ success: true, data: updated })

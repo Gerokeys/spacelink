@@ -16,7 +16,7 @@ function toNum(value: string | null): number | undefined {
 export async function GET(req: NextRequest) {
   // Rate limit: 120 searches per IP per minute
   const ip = getClientIp(req)
-  const rl = checkRateLimit(`search:${ip}`, LIMITS.SEARCH.limit, LIMITS.SEARCH.windowMs)
+  const rl = await checkRateLimit(`search:${ip}`, LIMITS.SEARCH.limit, LIMITS.SEARCH.windowMs)
   if (!rl.allowed) return tooManyRequests(rl.resetIn)
 
   try {

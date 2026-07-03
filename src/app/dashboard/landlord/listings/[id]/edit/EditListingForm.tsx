@@ -35,6 +35,7 @@ const schema = z.object({
   petsAllowed: z.boolean(),
   lat: z.number().nullable().optional(),
   lng: z.number().nullable().optional(),
+  amenityIds: z.array(z.string()).default([]),
 })
 
 type FormData = z.infer<typeof schema>
@@ -52,15 +53,23 @@ interface EditableListing extends Omit<FormData, "deposit" | "depositMonths" | "
   minLeaseMonths: number | null
   lat: number | null
   lng: number | null
+  amenityIds: string[]
 }
 
-export function EditListingForm({ listing }: { listing: EditableListing }) {
+interface AmenityOption {
+  id: string
+  name: string
+  icon: string
+  category: string
+}
+
+export function EditListingForm({ listing, allAmenities }: { listing: EditableListing; allAmenities: AmenityOption[] }) {
   const router = useRouter()
   const [saving, setSaving] = useState(false)
   const [togglingStatus, setTogglingStatus] = useState(false)
   const [status, setStatus] = useState(listing.status)
 
-  const { register, handleSubmit, watch, setValue, formState: { errors } } = useForm<FormData>({
+  const { register, handleSubmit, watch, setValue, getValues, formState: { errors } } = useForm<FormData>({
     resolver: zodResolver(schema) as never,
     defaultValues: {
       title: listing.title,
@@ -83,10 +92,26 @@ export function EditListingForm({ listing }: { listing: EditableListing }) {
       petsAllowed: listing.petsAllowed,
       lat: listing.lat,
       lng: listing.lng,
+      amenityIds: listing.amenityIds,
     },
   })
 
   const watchedCity = watch("city")
+  const watchedAmenityIds = watch("amenityIds")
+
+  const amenitiesByCategory = allAmenities.reduce<Record<string, AmenityOption[]>>((acc, a) => {
+    if (!acc[a.category]) acc[a.category] = []
+    acc[a.category].push(a)
+    return acc
+  }, {})
+
+  function toggleAmenity(id: string) {
+    const current = getValues("amenityIds")
+    setValue(
+      "amenityIds",
+      current.includes(id) ? current.filter((x) => x !== id) : [...current, id]
+    )
+  }
 
   async function onSubmit(data: FormData) {
     setSaving(true)
@@ -227,6 +252,35 @@ export function EditListingForm({ listing }: { listing: EditableListing }) {
           <Input {...register("depositMonths")} type="number" label="Deposit (months)" error={errors.depositMonths?.message} />
           <Input {...register("minLeaseMonths")} type="number" label="Min lease (months)" error={errors.minLeaseMonths?.message} />
         </div>
+      </div>
+
+      {/* Amenities */}
+      <div className="bg-white border border-gray-200 rounded-xl p-5 space-y-4">
+        <h2 className="font-semibold text-gray-900">Amenities</h2>
+        {Object.entries(amenitiesByCategory).map(([category, items]) => (
+          <div key={category}>
+            <h3 className="text-sm font-medium text-gray-500 mb-2">{category}</h3>
+            <div className="flex flex-wrap gap-2">
+              {items.map((a) => {
+                const selected = watchedAmenityIds.includes(a.id)
+                return (
+                  <button
+                    key={a.id}
+                    type="button"
+                    onClick={() => toggleAmenity(a.id)}
+                    className={
+                      selected
+                        ? "px-3 py-1.5 rounded-full text-sm border border-brand-500 bg-brand-50 text-brand-700 transition-colors"
+                        : "px-3 py-1.5 rounded-full text-sm border border-gray-200 text-gray-600 hover:border-gray-300 transition-colors"
+                    }
+                  >
+                    {a.name}
+                  </button>
+                )
+              })}
+            </div>
+          </div>
+        ))}
       </div>
 
       {/* Actions */}

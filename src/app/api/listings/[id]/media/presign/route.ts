@@ -10,7 +10,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
   if (!session) return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 })
 
   const ip = getClientIp(req)
-  const rl = checkRateLimit(`media:${ip}`, 60, 60 * 1000)
+  const rl = await checkRateLimit(`media:${ip}`, 60, 60 * 1000)
   if (!rl.allowed) return tooManyRequests(rl.resetIn)
 
   const { id } = await params

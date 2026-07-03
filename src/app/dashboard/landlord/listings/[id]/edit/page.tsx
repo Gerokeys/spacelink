@@ -29,7 +29,13 @@ export default async function EditListingPage({ params }: Props) {
   if (!session) redirect("/login?callbackUrl=/dashboard/landlord")
 
   const { id } = await params
-  const listing = await db.listing.findUnique({ where: { id } })
+  const [listing, allAmenities] = await Promise.all([
+    db.listing.findUnique({
+      where: { id },
+      include: { amenities: { select: { amenityId: true } } },
+    }),
+    db.amenity.findMany({ orderBy: [{ category: "asc" }, { name: "asc" }] }),
+  ])
 
   const canEdit =
     listing &&
@@ -95,7 +101,9 @@ export default async function EditListingPage({ params }: Props) {
           petsAllowed: listing.petsAllowed,
           lat: listing.lat,
           lng: listing.lng,
+          amenityIds: listing.amenities.map((a) => a.amenityId),
         }}
+        allAmenities={allAmenities}
       />
     </div>
   )

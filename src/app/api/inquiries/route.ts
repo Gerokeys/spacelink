@@ -16,7 +16,7 @@ const schema = z.object({
 export async function POST(req: NextRequest) {
   // Rate limit: 5 inquiries per IP per hour
   const ip = getClientIp(req)
-  const rl = checkRateLimit(`inquiry:${ip}`, LIMITS.INQUIRY.limit, LIMITS.INQUIRY.windowMs)
+  const rl = await checkRateLimit(`inquiry:${ip}`, LIMITS.INQUIRY.limit, LIMITS.INQUIRY.windowMs)
   if (!rl.allowed) return tooManyRequests(rl.resetIn)
 
   try {

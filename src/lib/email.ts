@@ -1,6 +1,9 @@
 import { Resend } from "resend"
 
-const FROM = process.env.EMAIL_FROM ?? "SpaceLink <noreply@spacelink.co.ke>"
+// Resend can only send from a domain verified in your Resend account.
+// onboarding@resend.dev works out of the box but only delivers to the
+// Resend account owner's email — verify a real domain for production.
+const FROM = process.env.EMAIL_FROM ?? "SpaceLink <onboarding@resend.dev>"
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000"
 
 // Lazy-initialize so a missing key doesn't crash the build

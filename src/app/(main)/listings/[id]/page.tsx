@@ -8,7 +8,6 @@ import {
 import { authOptions } from "@/lib/auth"
 import { db } from "@/lib/db"
 import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
 import { InquiryForm } from "@/components/forms/InquiryForm"
 import { PhotoGallery } from "@/components/listings/PhotoGallery"
 import { ListingMap } from "@/components/map/ListingMap"
@@ -115,7 +114,6 @@ export default async function ListingDetailPage({ params }: Props) {
   const previewBanner = PREVIEW_BANNERS[listing.status]
 
   const photos = listing.media.filter((m) => m.type === "PHOTO")
-  const hasVirtualTour = !!listing.tourConfig?.scenes.length
   const isVerified = listing.owner.profile?.idVerificationStatus === "VERIFIED"
 
   const amenitiesByCategory = listing.amenities.reduce<Record<string, typeof listing.amenities>>((acc, la) => {
@@ -159,9 +157,6 @@ export default async function ListingDetailPage({ params }: Props) {
             <div className="flex items-center gap-2 mb-3">
               <Badge variant="secondary">{LISTING_TYPE_LABELS[listing.type]}</Badge>
               {listing.isFeatured && <Badge variant="warning">Featured</Badge>}
-              {hasVirtualTour && (
-                <Badge variant="default" className="bg-brand-100 text-brand-700">360° Tour</Badge>
-              )}
             </div>
             <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">{listing.title}</h1>
             <p className="flex items-center gap-1.5 text-gray-500">
@@ -341,18 +336,6 @@ export default async function ListingDetailPage({ params }: Props) {
               )}
               <InquiryForm listingId={id} listingTitle={listing.title} />
             </div>
-
-            {/* Virtual tour */}
-            {hasVirtualTour && (
-              <div className="border border-brand-200 bg-brand-50 rounded-xl p-5 text-center">
-                <div className="text-4xl mb-2">360°</div>
-                <p className="font-semibold text-brand-900 mb-1">Virtual Tour Available</p>
-                <p className="text-xs text-brand-600 mb-3">Explore all rooms before visiting</p>
-                <Button variant="default" className="w-full" size="sm">
-                  Launch Virtual Tour
-                </Button>
-              </div>
-            )}
           </div>
         </div>
       </div>

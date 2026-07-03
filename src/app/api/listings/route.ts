@@ -42,7 +42,7 @@ export async function POST(req: NextRequest) {
 
   // Rate limit: 10 new listings per IP per day
   const ip = getClientIp(req)
-  const rl = checkRateLimit(`listing:${ip}`, LIMITS.LISTING_CREATE.limit, LIMITS.LISTING_CREATE.windowMs)
+  const rl = await checkRateLimit(`listing:${ip}`, LIMITS.LISTING_CREATE.limit, LIMITS.LISTING_CREATE.windowMs)
   if (!rl.allowed) return tooManyRequests(rl.resetIn)
 
   try {
@@ -85,6 +85,15 @@ export async function POST(req: NextRequest) {
         },
       },
     })
+
+    // First listing promotes a tenant to landlord so they get the
+    // dashboard nav entry; role is re-read from DB on every request
+    if (session.user.role === "TENANT") {
+      await db.user.update({
+        where: { id: session.user.id },
+        data: { role: "LANDLORD" },
+      })
+    }
 
     return NextResponse.json({ success: true, data: { id: listing.id } }, { status: 201 })
   } catch (err) {
