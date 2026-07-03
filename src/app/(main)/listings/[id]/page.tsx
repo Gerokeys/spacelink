@@ -1,9 +1,11 @@
 import { notFound } from "next/navigation"
 import Link from "next/link"
+import { getServerSession } from "next-auth"
 import {
   MapPin, Bed, Bath, Maximize, Car, CheckCircle2,
-  Calendar, Star, Shield, Clock, ChevronLeft,
+  Calendar, Star, Shield, Clock, ChevronLeft, EyeOff,
 } from "lucide-react"
+import { authOptions } from "@/lib/auth"
 import { db } from "@/lib/db"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -18,9 +20,32 @@ interface Props {
   params: Promise<{ id: string }>
 }
 
+const PREVIEW_BANNERS: Record<string, { text: string; cls: string }> = {
+  DRAFT: {
+    text: "Draft — this listing needs at least 3 photos before it goes to review. Only you and admins can see it.",
+    cls: "bg-gray-100 border-gray-300 text-gray-700",
+  },
+  PENDING: {
+    text: "Pending review — this listing is not publicly visible yet. Only you and admins can see it.",
+    cls: "bg-amber-50 border-amber-200 text-amber-800",
+  },
+  PAUSED: {
+    text: "Paused — this listing is hidden from search. Only you and admins can see it.",
+    cls: "bg-gray-100 border-gray-300 text-gray-700",
+  },
+  REJECTED: {
+    text: "Rejected — this listing was not approved. Edit it and it will be reviewed again.",
+    cls: "bg-red-50 border-red-200 text-red-700",
+  },
+  ARCHIVED: {
+    text: "Archived — this listing has been removed.",
+    cls: "bg-gray-100 border-gray-300 text-gray-700",
+  },
+}
+
 async function getListing(id: string) {
   const listing = await db.listing.findUnique({
-    where: { id, status: "ACTIVE" },
+    where: { id },
     include: {
       media: { orderBy: [{ isPrimary: "desc" }, { order: "asc" }] },
       amenities: { include: { amenity: true } },
@@ -52,6 +77,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { id } = await params
   const listing = await getListing(id)
   if (!listing) return { title: "Listing not found" }
+  // Don't leak unpublished listing details into metadata / crawlers
+  if (listing.status !== "ACTIVE") return { title: "Listing", robots: { index: false } }
   return {
     title: listing.title,
     description: listing.description.slice(0, 160),
@@ -68,8 +95,24 @@ export default async function ListingDetailPage({ params }: Props) {
   const listing = await getListing(id)
   if (!listing) notFound()
 
-  // Fire view count increment non-blocking
-  db.listing.update({ where: { id }, data: { viewCount: { increment: 1 } } }).catch(() => {})
+  // Non-active listings are only visible to their owner and admins
+  const isPubliclyVisible = listing.status === "ACTIVE"
+  if (!isPubliclyVisible) {
+    const session = await getServerSession(authOptions)
+    const canPreview =
+      session &&
+      (listing.ownerId === session.user.id ||
+        session.user.role === "ADMIN" ||
+        session.user.role === "SUPER_ADMIN")
+    if (!canPreview) notFound()
+  }
+
+  // Fire view count increment non-blocking (real public views only)
+  if (isPubliclyVisible) {
+    db.listing.update({ where: { id }, data: { viewCount: { increment: 1 } } }).catch(() => {})
+  }
+
+  const previewBanner = PREVIEW_BANNERS[listing.status]
 
   const photos = listing.media.filter((m) => m.type === "PHOTO")
   const hasVirtualTour = !!listing.tourConfig?.scenes.length
@@ -88,6 +131,19 @@ export default async function ListingDetailPage({ params }: Props) {
       <Link href="/search" className="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-700 mb-4 transition-colors">
         <ChevronLeft className="w-4 h-4" /> Back to search
       </Link>
+
+      {/* Owner/admin preview banner for unpublished listings */}
+      {previewBanner && (
+        <div className={`flex items-start gap-2.5 border rounded-xl px-4 py-3 text-sm mb-5 ${previewBanner.cls}`}>
+          <EyeOff className="w-4 h-4 mt-0.5 shrink-0" />
+          <p>
+            {previewBanner.text}
+            {listing.status === "REJECTED" && listing.rejectedReason && (
+              <span className="block mt-1 font-medium">Reason: {listing.rejectedReason}</span>
+            )}
+          </p>
+        </div>
+      )}
 
       {/* Photo gallery */}
       <PhotoGallery
