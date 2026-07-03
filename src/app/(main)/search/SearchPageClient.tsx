@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect, useCallback, useRef } from "react"
+import { useState, useCallback, useMemo } from "react"
 import { useSearchParams, useRouter } from "next/navigation"
 import { useQuery } from "@tanstack/react-query"
 import { LayoutList, Map, SlidersHorizontal, X } from "lucide-react"
@@ -67,27 +67,19 @@ export function SearchPageClient() {
   const [viewMode, setViewMode] = useState<ViewMode>("list")
   const [showFilters, setShowFilters] = useState(false)
   const [bounds, setBounds] = useState<MapBounds | null>(null)
-  const [filters, setFilters] = useState<SearchFilters>(() =>
-    parseFiltersFromUrl(searchParams)
-  )
-  const filtersRef = useRef(filters)
-  filtersRef.current = filters
 
-  // URL → state: react when the SearchBar (or back button) changes the URL
-  useEffect(() => {
-    const parsed = parseFiltersFromUrl(searchParams)
-    if (filtersToParams(parsed).toString() !== filtersToParams(filtersRef.current).toString()) {
-      setFilters(parsed)
-    }
-  }, [searchParams])
+  // The URL is the single source of truth for filters. Filter changes are
+  // router.replace calls; there is no state to sync (a two-way sync here
+  // previously raced against itself and flipped filters on and off).
+  const filters = useMemo(() => parseFiltersFromUrl(searchParams), [searchParams])
 
-  // State → URL: keep the address bar shareable
-  useEffect(() => {
-    const canonical = filtersToParams(filters).toString()
-    if (canonical !== searchParams.toString()) {
+  const applyFilters = useCallback(
+    (newFilters: SearchFilters) => {
+      const canonical = filtersToParams(newFilters).toString()
       router.replace(`/search${canonical ? `?${canonical}` : ""}`, { scroll: false })
-    }
-  }, [filters, router, searchParams])
+    },
+    [router]
+  )
 
   const { data, isLoading, isError } = useQuery({
     queryKey: ["search", filtersToParams(filters).toString(), bounds],
@@ -99,13 +91,12 @@ export function SearchPageClient() {
   const total = data?.total ?? 0
 
   const handleFiltersChange = useCallback((newFilters: SearchFilters) => {
-    setFilters(newFilters)
-  }, [])
+    applyFilters(newFilters)
+  }, [applyFilters])
 
   // User panned/zoomed the map → filter results to the visible area
   const handleBoundsChange = useCallback((newBounds: MapBounds | null) => {
     setBounds(newBounds)
-    setFilters((f) => ({ ...f, page: 1 }))
   }, [])
 
   return (
@@ -278,7 +269,7 @@ export function SearchPageClient() {
                     variant="outline"
                     size="sm"
                     disabled={filters.page === 1}
-                    onClick={() => setFilters((f) => ({ ...f, page: (f.page ?? 1) - 1 }))}
+                    onClick={() => applyFilters({ ...filters, page: (filters.page ?? 1) - 1 })}
                   >
                     Previous
                   </Button>
@@ -289,7 +280,7 @@ export function SearchPageClient() {
                     variant="outline"
                     size="sm"
                     disabled={filters.page === data.totalPages}
-                    onClick={() => setFilters((f) => ({ ...f, page: (f.page ?? 1) + 1 }))}
+                    onClick={() => applyFilters({ ...filters, page: (filters.page ?? 1) + 1 })}
                   >
                     Next
                   </Button>

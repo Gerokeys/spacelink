@@ -73,8 +73,11 @@ export function MapView({ listings, onBoundsChange, boundsActive = false }: MapV
   onBoundsChangeRef.current = onBoundsChange
   const boundsActiveRef = useRef(boundsActive)
   boundsActiveRef.current = boundsActive
-  // Set true around our own fitBounds so it isn't mistaken for a user move
-  const programmaticMoveRef = useRef(false)
+  // Only moves that started from real user input (pan/zoom/tap) should
+  // trigger the area filter — moveend also fires for container resizes
+  // and our own fitBounds, which would otherwise feed back into a
+  // refetch → layout shift → resize → moveend loop
+  const userMoveRef = useRef(false)
 
   // Create the map once
   useEffect(() => {
@@ -94,12 +97,17 @@ export function MapView({ listings, onBoundsChange, boundsActive = false }: MapV
       mapRef.current = map
       map.on("load", () => setMapReady(true))
 
+      // Any pointer/wheel interaction inside the map (including the zoom
+      // buttons) marks the next move as user-driven
+      const markUserMove = () => { userMoveRef.current = true }
+      const container = containerRef.current
+      container.addEventListener("pointerdown", markUserMove)
+      container.addEventListener("wheel", markUserMove, { passive: true })
+
       // Zillow-style: panning/zooming filters results to the visible area
       map.on("moveend", () => {
-        if (programmaticMoveRef.current) {
-          programmaticMoveRef.current = false
-          return
-        }
+        if (!userMoveRef.current) return
+        userMoveRef.current = false
         const b = map.getBounds()
         if (b) {
           onBoundsChangeRef.current?.({
@@ -157,7 +165,9 @@ export function MapView({ listings, onBoundsChange, boundsActive = false }: MapV
 
       // Don't move the camera while the user is driving the viewport filter
       if (shouldFit) {
-        programmaticMoveRef.current = true
+        // Clear any stray user-intent flag (e.g. from a marker click) so
+        // this programmatic move can't be mistaken for a user pan
+        userMoveRef.current = false
         map.fitBounds(bounds, { padding: 60, maxZoom: 15, duration: 600 })
       }
     })

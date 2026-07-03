@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell(npm run build > build.log 2>&1; \"exit: $LASTEXITCODE\"; Get-Content build.log | Select-String \"error\" | Select-Object -First 5; Remove-Item build.log)"
+    ]
+  }
+}
