@@ -1,4 +1,5 @@
 import { Resend } from "resend"
+import { toWhatsAppNumber } from "@/lib/utils"
 
 // Resend can only send from a domain verified in your Resend account.
 // onboarding@resend.dev works out of the box but only delivers to the
@@ -47,6 +48,11 @@ export async function sendInquiryNotification({
   const resend = getResend()
   if (!resend) return
 
+  const waNumber = toWhatsAppNumber(tenantPhone)
+  const waLink = waNumber
+    ? `https://wa.me/${waNumber}?text=${encodeURIComponent(`Hi ${tenantName}, thanks for your inquiry about "${listingTitle}" on SpaceLink. `)}`
+    : null
+
   await resend.emails.send({
     from: FROM,
     to: landlordEmail,
@@ -64,6 +70,12 @@ export async function sendInquiryNotification({
           <p><strong>Message:</strong></p>
           <p style="white-space: pre-wrap;">${esc(message)}</p>
         </div>
+        ${waLink ? `
+        <a href="${waLink}"
+           style="display: inline-block; background: #25D366; color: white; padding: 12px 24px;
+                  border-radius: 6px; text-decoration: none; margin-top: 8px; margin-right: 8px;">
+          Reply on WhatsApp
+        </a>` : ""}
         <a href="${APP_URL}/dashboard/landlord/inquiries"
            style="display: inline-block; background: #006aff; color: white; padding: 12px 24px;
                   border-radius: 6px; text-decoration: none; margin-top: 8px;">

@@ -33,6 +33,7 @@ export default async function LandlordInquiriesPage() {
         initialInquiries={inquiries.map((i) => ({
           id: i.id,
           message: i.message,
+          phone: i.phone,
           status: i.status,
           moveInDate: i.moveInDate?.toISOString() ?? null,
           createdAt: i.createdAt.toISOString(),

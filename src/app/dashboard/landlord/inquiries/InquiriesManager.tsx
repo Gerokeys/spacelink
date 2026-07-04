@@ -3,16 +3,17 @@
 import { useState } from "react"
 import Link from "next/link"
 import { toast } from "sonner"
-import { Mail, MessageSquare, Calendar, CheckCircle, XCircle } from "lucide-react"
+import { Mail, MessageSquare, Calendar, CheckCircle, XCircle, Phone } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { timeAgo, cn } from "@/lib/utils"
+import { timeAgo, cn, toWhatsAppNumber } from "@/lib/utils"
 
 type InquiryStatus = "PENDING" | "RESPONDED" | "CLOSED" | "ARCHIVED"
 
 interface InquiryRow {
   id: string
   message: string
+  phone: string | null
   status: InquiryStatus
   moveInDate: string | null
   createdAt: string
@@ -139,9 +140,22 @@ export function InquiriesManager({ initialInquiries }: { initialInquiries: Inqui
 
                 {/* Actions */}
                 <div className="flex items-center gap-2 flex-wrap">
+                  {toWhatsAppNumber(inquiry.phone) && (
+                    <a
+                      href={`https://wa.me/${toWhatsAppNumber(inquiry.phone)}?text=${encodeURIComponent(
+                        `Hi ${inquiry.tenant.name ?? ""}, thanks for your inquiry about "${inquiry.listing.title}" on SpaceLink. `
+                      )}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <Button size="sm" className="gap-1.5 bg-[#25D366] hover:bg-[#1EBE5A] text-white">
+                        <Phone className="w-3.5 h-3.5" /> Reply on WhatsApp
+                      </Button>
+                    </a>
+                  )}
                   {inquiry.tenant.email && (
                     <a href={`mailto:${inquiry.tenant.email}?subject=${encodeURIComponent(`Re: ${inquiry.listing.title} — SpaceLink`)}`}>
-                      <Button size="sm" className="gap-1.5">
+                      <Button size="sm" variant="outline" className="gap-1.5">
                         <Mail className="w-3.5 h-3.5" /> Reply by email
                       </Button>
                     </a>

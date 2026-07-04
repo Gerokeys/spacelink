@@ -279,6 +279,7 @@ model Inquiry {
   tenantId   String
   landlordId String
   message    String        @db.Text
+  phone      String?
   status     InquiryStatus @default(PENDING)
   moveInDate DateTime?
   createdAt  DateTime      @default(now())

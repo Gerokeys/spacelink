@@ -79,6 +79,7 @@ export async function POST(req: NextRequest) {
         tenantId,
         landlordId: listing.owner.id,
         message: data.message,
+        phone: data.phone,
         moveInDate: data.moveInDate ? new Date(data.moveInDate) : undefined,
       },
     })
