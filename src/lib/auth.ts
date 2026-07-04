@@ -14,6 +14,10 @@ export const authOptions: NextAuthOptions = {
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID!,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+      // The inquiry flow creates guest users keyed by email; without this,
+      // those users can never sign in with Google ("OAuthAccountNotLinked").
+      // Safe for Google specifically because it verifies email ownership.
+      allowDangerousEmailAccountLinking: true,
     }),
   ],
   callbacks: {
