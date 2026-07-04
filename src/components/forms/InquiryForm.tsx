@@ -1,6 +1,7 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
+import { useSession } from "next-auth/react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
@@ -24,18 +25,28 @@ interface InquiryFormProps {
 }
 
 export function InquiryForm({ listingId, listingTitle }: InquiryFormProps) {
+  const { data: session } = useSession()
   const [submitted, setSubmitted] = useState(false)
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
     reset,
+    setValue,
+    getValues,
   } = useForm<FormData>({
     resolver: zodResolver(schema),
     defaultValues: {
       message: `Hi, I'm interested in "${listingTitle}". Could you please provide more information?`,
     },
   })
+
+  // Prefill from the signed-in account without clobbering anything typed
+  useEffect(() => {
+    if (!session?.user) return
+    if (!getValues("name") && session.user.name) setValue("name", session.user.name)
+    if (!getValues("email") && session.user.email) setValue("email", session.user.email)
+  }, [session, getValues, setValue])
 
   async function onSubmit(data: FormData) {
     try {

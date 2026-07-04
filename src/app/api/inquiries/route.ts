@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
+import { getServerSession } from "next-auth"
+import { authOptions } from "@/lib/auth"
 import { db } from "@/lib/db"
 import { z } from "zod"
 import { sendInquiryNotification, sendInquiryConfirmation } from "@/lib/email"
@@ -22,13 +24,18 @@ export async function POST(req: NextRequest) {
   try {
     const body = await req.json()
     const data = schema.parse(body)
+    const session = await getServerSession(authOptions)
 
-    // Prevent duplicate inquiries from same email to same listing within 24h
+    // Prevent duplicate inquiries to the same listing within 24h,
+    // whether identified by typed email or signed-in account
     const recent = await db.inquiry.findFirst({
       where: {
         listingId: data.listingId,
-        tenant: { email: data.email },
         createdAt: { gte: new Date(Date.now() - 24 * 60 * 60 * 1000) },
+        OR: [
+          { tenant: { email: data.email } },
+          ...(session ? [{ tenantId: session.user.id }] : []),
+        ],
       },
     })
     if (recent) {
@@ -51,18 +58,25 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ success: false, error: "Listing not found" }, { status: 404 })
     }
 
-    // Find or create a guest user record for the tenant
-    let tenant = await db.user.findUnique({ where: { email: data.email } })
-    if (!tenant) {
-      tenant = await db.user.create({
-        data: { email: data.email, name: data.name, role: "TENANT" },
-      })
+    // Signed-in users own their inquiries (so /my-inquiries works);
+    // anonymous inquiries fall back to a guest user keyed by email
+    let tenantId: string
+    if (session) {
+      tenantId = session.user.id
+    } else {
+      let tenant = await db.user.findUnique({ where: { email: data.email } })
+      if (!tenant) {
+        tenant = await db.user.create({
+          data: { email: data.email, name: data.name, role: "TENANT" },
+        })
+      }
+      tenantId = tenant.id
     }
 
     const inquiry = await db.inquiry.create({
       data: {
         listingId: data.listingId,
-        tenantId: tenant.id,
+        tenantId,
         landlordId: listing.owner.id,
         message: data.message,
         moveInDate: data.moveInDate ? new Date(data.moveInDate) : undefined,
