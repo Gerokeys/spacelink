@@ -49,12 +49,12 @@ export function Navbar() {
         <div className="hidden md:flex items-center gap-2">
           {session ? (
             <>
-              <Link href="/saved" aria-label="Saved listings">
+              <Link href="/saved" aria-label="Saved listings" title="Saved listings">
                 <Button variant="ghost" size="icon-sm">
                   <Heart className="w-4 h-4" />
                 </Button>
               </Link>
-              <Link href="/my-inquiries" aria-label="My inquiries">
+              <Link href="/my-inquiries" aria-label="My inquiries" title="My inquiries">
                 <Button variant="ghost" size="icon-sm">
                   <MessageSquare className="w-4 h-4" />
                 </Button>
