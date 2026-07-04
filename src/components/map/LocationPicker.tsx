@@ -2,7 +2,8 @@
 
 import "mapbox-gl/dist/mapbox-gl.css"
 import { useEffect, useRef, useState } from "react"
-import { Search, Loader2, MapPin, X } from "lucide-react"
+import { Search, Loader2, MapPin, X, LocateFixed } from "lucide-react"
+import { toast } from "sonner"
 import type { Map as MapboxMap, Marker as MapboxMarker } from "mapbox-gl"
 
 const TOKEN = process.env.NEXT_PUBLIC_MAPBOX_TOKEN
@@ -34,7 +35,43 @@ export function LocationPicker({ lat, lng, onChange, searchHint }: LocationPicke
   const [query, setQuery] = useState(searchHint ?? "")
   const [results, setResults] = useState<GeocodeResult[]>([])
   const [searching, setSearching] = useState(false)
+  const [locating, setLocating] = useState(false)
   const hasPin = lat !== null && lng !== null
+
+  function useMyLocation() {
+    if (!navigator.geolocation) {
+      toast.error("Your browser doesn't support location access")
+      return
+    }
+    setLocating(true)
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        setLocating(false)
+        const { latitude, longitude, accuracy } = pos.coords
+        onChangeRef.current(latitude, longitude)
+        const map = mapRef.current
+        const marker = markerRef.current
+        if (map && marker) {
+          marker.setLngLat([longitude, latitude]).addTo(map)
+          map.flyTo({ center: [longitude, latitude], zoom: 17, duration: 800 })
+        }
+        if (accuracy > 100) {
+          toast.info("Location found, but accuracy is low — drag the pin to fine-tune.")
+        } else {
+          toast.success("Pin dropped at your current location")
+        }
+      },
+      (err) => {
+        setLocating(false)
+        toast.error(
+          err.code === err.PERMISSION_DENIED
+            ? "Location access was denied — allow it in your browser settings, or drop the pin manually."
+            : "Couldn't get your location. Try again outdoors, or drop the pin manually."
+        )
+      },
+      { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
+    )
+  }
 
   // Create map + marker plumbing once
   useEffect(() => {
@@ -146,6 +183,16 @@ export function LocationPicker({ lat, lng, onChange, searchHint }: LocationPicke
             aria-label="Search location"
           >
             {searching ? <Loader2 className="w-4 h-4 animate-spin" /> : <Search className="w-4 h-4" />}
+          </button>
+          <button
+            type="button"
+            onClick={useMyLocation}
+            disabled={locating}
+            className="flex items-center gap-1.5 px-3 rounded-lg border border-brand-300 bg-brand-50 text-brand-700 text-sm hover:bg-brand-100 disabled:opacity-50 whitespace-nowrap"
+            title="Use my current location"
+          >
+            {locating ? <Loader2 className="w-4 h-4 animate-spin" /> : <LocateFixed className="w-4 h-4" />}
+            <span className="hidden sm:inline">My location</span>
           </button>
         </div>
 
