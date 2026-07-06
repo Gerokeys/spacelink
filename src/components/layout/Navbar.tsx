@@ -7,7 +7,7 @@ import { useSession, signOut } from "next-auth/react"
 import { useEffect, useState } from "react"
 import { Menu, X, Heart, MessageSquare, LayoutDashboard, Plus } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { cn } from "@/lib/utils"
+import { cn, getInitials } from "@/lib/utils"
 
 export function Navbar() {
   const { data: session } = useSession()
@@ -177,17 +177,21 @@ export function Navbar() {
           )}
         </div>
 
-        {/* Mobile: sign-in (right) — kept visible to encourage sign-ups */}
+        {/* Mobile right slot: Sign in when signed out (encourages sign-ups),
+            account avatar when signed in */}
         <div className="md:hidden">
           {session ? (
-            <Link href="/saved" aria-label="Saved listings">
-              <Button
-                variant="ghost"
-                size="icon-sm"
-                className={transparent ? "text-white hover:bg-white/10" : undefined}
-              >
-                <Heart className="w-4 h-4" />
-              </Button>
+            <Link
+              href={(isLandlord || isAdmin) ? "/dashboard/landlord" : "/saved"}
+              aria-label="Your account"
+              className={cn(
+                "flex items-center justify-center w-9 h-9 rounded-full text-sm font-semibold shrink-0 border",
+                transparent
+                  ? "bg-white/15 text-white border-white/40"
+                  : "bg-brand-600 text-white border-brand-600"
+              )}
+            >
+              {getInitials(session.user.name ?? null)}
             </Link>
           ) : (
             <Link href="/login">
