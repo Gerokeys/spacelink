@@ -9,6 +9,8 @@ interface SearchFiltersPanelProps {
   filters: SearchFilters
   onChange: (filters: SearchFilters) => void
   resultCount: number
+  /** Hide the internal header when the container already provides one (mobile drawer) */
+  hideHeader?: boolean
 }
 
 const PRICE_PRESETS = [
@@ -29,7 +31,7 @@ const BEDROOM_OPTIONS = [
   { label: "4+", value: 4 },
 ]
 
-export function SearchFiltersPanel({ filters, onChange, resultCount }: SearchFiltersPanelProps) {
+export function SearchFiltersPanel({ filters, onChange, resultCount, hideHeader = false }: SearchFiltersPanelProps) {
   const update = (patch: Partial<SearchFilters>) => onChange({ ...filters, ...patch, page: 1 })
 
   const activeFilterCount = [
@@ -43,10 +45,12 @@ export function SearchFiltersPanel({ filters, onChange, resultCount }: SearchFil
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h2 className="font-semibold text-gray-900">Filters</h2>
-        <span className="text-sm text-gray-400">{resultCount} results</span>
-      </div>
+      {!hideHeader && (
+        <div className="flex items-center justify-between">
+          <h2 className="font-semibold text-gray-900">Filters</h2>
+          <span className="text-sm text-gray-400">{resultCount} results</span>
+        </div>
+      )}
 
       {/* Type */}
       <div>

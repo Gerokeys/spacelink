@@ -181,6 +181,7 @@ export function SearchPageClient() {
                 filters={filters}
                 onChange={handleFiltersChange}
                 resultCount={total}
+                hideHeader
               />
             </div>
             <div className="border-t border-gray-200 p-4 shrink-0">
