@@ -1,16 +1,26 @@
 "use client"
 
-import { useState, useCallback, useMemo } from "react"
+import { useState, useCallback, useMemo, useRef } from "react"
 import { useSearchParams, useRouter } from "next/navigation"
 import { useQuery } from "@tanstack/react-query"
-import { LayoutList, Map, SlidersHorizontal, X } from "lucide-react"
+import { LayoutList, Map, SlidersHorizontal, X, MapPin } from "lucide-react"
 import { ListingCard } from "@/components/listings/ListingCard"
 import { SearchBar } from "@/components/search/SearchBar"
 import { SearchFiltersPanel } from "@/components/search/SearchFiltersPanel"
-import { MapView, type MapBounds } from "@/components/map/MapView"
+import { MapView, type MapBounds, type SearchArea } from "@/components/map/MapView"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import type { SearchFilters, SearchResult, ListingType } from "@/types"
+
+// A searched place, carried in the URL as area=<name> & abbox=w,s,e,n
+function parseAreaFromUrl(searchParams: URLSearchParams): SearchArea | null {
+  const name = searchParams.get("area")
+  const abbox = searchParams.get("abbox")
+  if (!name || !abbox) return null
+  const parts = abbox.split(",").map(Number)
+  if (parts.length !== 4 || !parts.every(Number.isFinite)) return null
+  return { name, bbox: parts as [number, number, number, number] }
+}
 
 function parseFiltersFromUrl(searchParams: URLSearchParams): SearchFilters {
   return {
@@ -46,9 +56,17 @@ function filtersToParams(filters: SearchFilters): URLSearchParams {
   return params
 }
 
-async function fetchListings(filters: SearchFilters, bounds: MapBounds | null): Promise<SearchResult> {
+async function fetchListings(
+  filters: SearchFilters,
+  bounds: MapBounds | null,
+  area: SearchArea | null
+): Promise<SearchResult> {
   const params = filtersToParams(filters)
-  if (bounds) {
+  if (area) {
+    // Filter results to the searched place by name (works with listings
+    // that aren't geocoded yet); the bbox is only used to draw + zoom
+    params.set("q", area.name)
+  } else if (bounds) {
     params.set("bounds", `${bounds.west},${bounds.south},${bounds.east},${bounds.north}`)
   }
   const res = await fetch(`/api/search?${params}`)
@@ -70,18 +88,38 @@ export function SearchPageClient() {
   // router.replace calls; there is no state to sync (a two-way sync here
   // previously raced against itself and flipped filters on and off).
   const filters = useMemo(() => parseFiltersFromUrl(searchParams), [searchParams])
+  const area = useMemo(() => parseAreaFromUrl(searchParams), [searchParams])
+
+  // Ref so filter changes can preserve the active area in the URL
+  const areaRef = useRef(area)
+  areaRef.current = area
 
   const applyFilters = useCallback(
     (newFilters: SearchFilters) => {
-      const canonical = filtersToParams(newFilters).toString()
-      router.replace(`/search${canonical ? `?${canonical}` : ""}`, { scroll: false })
+      const params = filtersToParams(newFilters)
+      // Keep the searched-place boundary when other filters change
+      if (areaRef.current) {
+        params.set("area", areaRef.current.name)
+        params.set("abbox", areaRef.current.bbox.join(","))
+      }
+      const qs = params.toString()
+      router.replace(`/search${qs ? `?${qs}` : ""}`, { scroll: false })
     },
     [router]
   )
 
+  const clearArea = useCallback(() => {
+    // Drop area/abbox but keep every other filter
+    const qs = filtersToParams(filters).toString()
+    router.replace(`/search${qs ? `?${qs}` : ""}`, { scroll: false })
+  }, [router, filters])
+
+  // A searched place is the active constraint; ignore any stale viewport filter
+  const effectiveBounds = area ? null : bounds
+
   const { data, isLoading, isError } = useQuery({
-    queryKey: ["search", filtersToParams(filters).toString(), bounds],
-    queryFn: () => fetchListings(filters, bounds),
+    queryKey: ["search", filtersToParams(filters).toString(), area?.name ?? null, effectiveBounds],
+    queryFn: () => fetchListings(filters, effectiveBounds, area),
     placeholderData: (prev) => prev,
   })
 
@@ -103,7 +141,8 @@ export function SearchPageClient() {
       <div className="border-b border-gray-200 bg-white px-4 py-3 shrink-0">
         <div className="max-w-3xl">
           <SearchBar
-            defaultQuery={filters.query}
+            key={area?.name ?? filters.query ?? "all"}
+            defaultQuery={area?.name ?? filters.query}
             defaultType={(Array.isArray(filters.type) ? filters.type[0] : filters.type) ?? "ALL"}
           />
         </div>
@@ -119,14 +158,21 @@ export function SearchPageClient() {
               <><strong className="text-gray-900">{total.toLocaleString()}</strong> spaces found</>
             )}
           </p>
-          {bounds && (
+          {area ? (
+            <button
+              onClick={clearArea}
+              className="flex items-center gap-1 text-xs bg-brand-50 text-brand-700 border border-brand-200 rounded-full px-2.5 py-1 hover:bg-brand-100 transition-colors shrink-0"
+            >
+              <MapPin className="w-3 h-3" /> {area.name} <X className="w-3 h-3" />
+            </button>
+          ) : bounds ? (
             <button
               onClick={() => handleBoundsChange(null)}
               className="flex items-center gap-1 text-xs bg-brand-50 text-brand-700 border border-brand-200 rounded-full px-2.5 py-1 hover:bg-brand-100 transition-colors shrink-0"
             >
               Map area <X className="w-3 h-3" />
             </button>
-          )}
+          ) : null}
         </div>
 
         <div className="flex items-center gap-2">
@@ -243,9 +289,11 @@ export function SearchPageClient() {
                   <Map className="w-12 h-12 mx-auto mb-3 opacity-30" />
                   <p className="text-xl font-medium mb-2 text-gray-500">No results found</p>
                   <p className="text-sm">
-                    {bounds
-                      ? "No listings in this map area. Zoom out or clear the map filter."
-                      : "Try adjusting your filters or search in a different area."}
+                    {area
+                      ? `No listings in ${area.name} yet. Remove the boundary to search more widely.`
+                      : bounds
+                        ? "No listings in this map area. Zoom out or clear the map filter."
+                        : "Try adjusting your filters or search in a different area."}
                   </p>
                 </div>
               ) : (
@@ -298,6 +346,8 @@ export function SearchPageClient() {
             listings={listings}
             onBoundsChange={handleBoundsChange}
             boundsActive={!!bounds}
+            area={area}
+            onClearArea={clearArea}
           />
         </div>
       </div>

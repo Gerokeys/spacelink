@@ -2,8 +2,8 @@
 
 import "mapbox-gl/dist/mapbox-gl.css"
 import { useEffect, useRef, useState } from "react"
-import { MapPin } from "lucide-react"
-import type { Map as MapboxMap, Marker as MapboxMarker } from "mapbox-gl"
+import { MapPin, X } from "lucide-react"
+import type { Map as MapboxMap, Marker as MapboxMarker, GeoJSONSource } from "mapbox-gl"
 import type { ListingCard } from "@/types"
 
 export interface MapBounds {
@@ -13,13 +13,26 @@ export interface MapBounds {
   north: number
 }
 
+export interface SearchArea {
+  name: string
+  bbox: [number, number, number, number] // [west, south, east, north]
+}
+
 interface MapViewProps {
   listings: ListingCard[]
   /** Called with the visible area when the user pans/zooms, or null to clear */
   onBoundsChange?: (bounds: MapBounds | null) => void
   /** True while results are being filtered to the map viewport */
   boundsActive?: boolean
+  /** A searched place to outline on the map; null to clear the outline */
+  area?: SearchArea | null
+  /** Invoked by the on-map "Remove boundary" control */
+  onClearArea?: () => void
 }
+
+const AREA_SRC = "search-area"
+const AREA_FILL = "search-area-fill"
+const AREA_LINE = "search-area-line"
 
 const TOKEN = process.env.NEXT_PUBLIC_MAPBOX_TOKEN
 // Kenya-wide default view
@@ -64,7 +77,7 @@ function buildPopupContent(listing: ListingCard): HTMLElement {
   return root
 }
 
-export function MapView({ listings, onBoundsChange, boundsActive = false }: MapViewProps) {
+export function MapView({ listings, onBoundsChange, boundsActive = false, area = null, onClearArea }: MapViewProps) {
   const containerRef = useRef<HTMLDivElement>(null)
   const mapRef = useRef<MapboxMap | null>(null)
   const markersRef = useRef<MapboxMarker[]>([])
@@ -75,6 +88,10 @@ export function MapView({ listings, onBoundsChange, boundsActive = false }: MapV
   onBoundsChangeRef.current = onBoundsChange
   const boundsActiveRef = useRef(boundsActive)
   boundsActiveRef.current = boundsActive
+  // While a searched-place boundary is shown it is the active constraint,
+  // so map panning should not also trigger viewport search or re-fit
+  const areaActiveRef = useRef(!!area)
+  areaActiveRef.current = !!area
   // Only moves that started from real user input (pan/zoom/tap) should
   // trigger the area filter — moveend also fires for container resizes
   // and our own fitBounds, which would otherwise feed back into a
@@ -110,6 +127,8 @@ export function MapView({ listings, onBoundsChange, boundsActive = false }: MapV
       map.on("moveend", () => {
         if (!userMoveRef.current) return
         userMoveRef.current = false
+        // A searched-place boundary takes precedence over viewport search
+        if (areaActiveRef.current) return
         const b = map.getBounds()
         if (b) {
           onBoundsChangeRef.current?.({
@@ -144,7 +163,8 @@ export function MapView({ listings, onBoundsChange, boundsActive = false }: MapV
       const located = listings.filter((l) => l.lat !== null && l.lng !== null)
       if (located.length === 0) return
 
-      const shouldFit = !boundsActiveRef.current
+      // The area boundary effect owns the camera when a place is searched
+      const shouldFit = !boundsActiveRef.current && !areaActiveRef.current
       const bounds = new mapboxgl.LngLatBounds()
 
       for (const listing of located) {
@@ -177,6 +197,80 @@ export function MapView({ listings, onBoundsChange, boundsActive = false }: MapV
     return () => { cancelled = true }
   }, [listings, mapReady])
 
+  // Draw / clear the searched-place boundary
+  useEffect(() => {
+    const map = mapRef.current
+    if (!map || !mapReady) return
+    let cancelled = false
+
+    function removeBoundary() {
+      if (!map) return
+      if (map.getLayer(AREA_LINE)) map.removeLayer(AREA_LINE)
+      if (map.getLayer(AREA_FILL)) map.removeLayer(AREA_FILL)
+      if (map.getSource(AREA_SRC)) map.removeSource(AREA_SRC)
+    }
+
+    if (!area) {
+      removeBoundary()
+      return
+    }
+
+    function drawFeature(feature: GeoJSON.Feature) {
+      if (!map) return
+      const existing = map.getSource(AREA_SRC) as GeoJSONSource | undefined
+      if (existing) {
+        existing.setData(feature)
+      } else {
+        map.addSource(AREA_SRC, { type: "geojson", data: feature })
+        map.addLayer({
+          id: AREA_FILL,
+          type: "fill",
+          source: AREA_SRC,
+          paint: { "fill-color": "#006aff", "fill-opacity": 0.07 },
+        })
+        map.addLayer({
+          id: AREA_LINE,
+          type: "line",
+          source: AREA_SRC,
+          paint: { "line-color": "#006aff", "line-width": 2.5, "line-dasharray": [2, 1] },
+        })
+      }
+    }
+
+    // Draw an immediate rectangle from the bbox, then upgrade to a real
+    // OSM polygon if one is available (many Kenyan towns/wards have them)
+    const [w, s, e, n] = area.bbox
+    drawFeature({
+      type: "Feature",
+      properties: {},
+      geometry: { type: "Polygon", coordinates: [[[w, s], [e, s], [e, n], [w, n], [w, s]]] },
+    })
+
+    import("mapbox-gl").then(({ default: mapboxgl }) => {
+      if (cancelled || !map) return
+      map.fitBounds(
+        new mapboxgl.LngLatBounds([w, s], [e, n]),
+        { padding: 48, duration: 700, maxZoom: 15 }
+      )
+    })
+
+    fetch(
+      `https://nominatim.openstreetmap.org/search?format=json&polygon_geojson=1&limit=1&countrycodes=ke&q=${encodeURIComponent(area.name)}`,
+      { headers: { Accept: "application/json" } }
+    )
+      .then((r) => (r.ok ? r.json() : []))
+      .then((arr) => {
+        if (cancelled) return
+        const geom = arr?.[0]?.geojson
+        if (geom && (geom.type === "Polygon" || geom.type === "MultiPolygon")) {
+          drawFeature({ type: "Feature", properties: {}, geometry: geom })
+        }
+      })
+      .catch(() => {})
+
+    return () => { cancelled = true }
+  }, [area, mapReady])
+
   if (!TOKEN) {
     return (
       <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-slate-100 to-brand-50">
@@ -198,6 +292,16 @@ export function MapView({ listings, onBoundsChange, boundsActive = false }: MapV
   return (
     <div className="relative w-full h-full">
       <div ref={containerRef} className="w-full h-full" />
+
+      {area && (
+        <button
+          onClick={onClearArea}
+          className="absolute top-3 left-3 z-10 flex items-center gap-1.5 bg-white shadow-md rounded-lg px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 border border-gray-200"
+        >
+          <X className="w-4 h-4" /> Remove boundary
+        </button>
+      )}
+
       {unlocatedCount > 0 && (
         <div className="absolute bottom-3 left-3 bg-white/95 text-xs text-gray-600 rounded-lg shadow px-3 py-1.5">
           {unlocatedCount} listing{unlocatedCount > 1 ? "s" : ""} without a map location
