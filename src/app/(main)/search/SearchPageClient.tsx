@@ -241,8 +241,12 @@ export function SearchPageClient() {
 
       {/* Main content — split layout */}
       <div className="flex flex-1 overflow-hidden">
-        {/* Left panel — filters + listings */}
-        <div className="flex flex-1 overflow-hidden min-w-0">
+        {/* Left panel — filters + listings. In map mode on mobile it has no
+            visible children, so collapse it there and let the map fill width */}
+        <div className={cn(
+          "flex-1 overflow-hidden min-w-0",
+          viewMode === "map" ? "hidden lg:flex" : "flex"
+        )}>
           {/* Filters sidebar — desktop only; mobile uses the drawer above */}
           <div className="hidden lg:block w-72 shrink-0 border-r border-gray-200 bg-white overflow-y-auto">
             <div className="p-4">

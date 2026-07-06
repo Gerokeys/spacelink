@@ -81,6 +81,7 @@ export function MapView({ listings, onBoundsChange, boundsActive = false, area =
   const containerRef = useRef<HTMLDivElement>(null)
   const mapRef = useRef<MapboxMap | null>(null)
   const markersRef = useRef<MapboxMarker[]>([])
+  const resizeObsRef = useRef<ResizeObserver | null>(null)
   const [mapReady, setMapReady] = useState(false)
 
   // Refs so the map's event handlers always see current values
@@ -116,6 +117,14 @@ export function MapView({ listings, onBoundsChange, boundsActive = false, area =
       mapRef.current = map
       map.on("load", () => setMapReady(true))
 
+      // Mapbox sizes its canvas to the container at init; if the container
+      // later changes size (list/map view toggle, orientation, drawer),
+      // the canvas keeps its old size and renders in only part of the box.
+      // A ResizeObserver keeps the canvas in sync.
+      const ro = new ResizeObserver(() => map.resize())
+      ro.observe(containerRef.current)
+      resizeObsRef.current = ro
+
       // Any pointer/wheel interaction inside the map (including the zoom
       // buttons) marks the next move as user-driven
       const markUserMove = () => { userMoveRef.current = true }
@@ -143,6 +152,8 @@ export function MapView({ listings, onBoundsChange, boundsActive = false, area =
 
     return () => {
       cancelled = true
+      resizeObsRef.current?.disconnect()
+      resizeObsRef.current = null
       mapRef.current?.remove()
       mapRef.current = null
     }
