@@ -2,7 +2,7 @@ import type { Metadata } from "next"
 
 export const metadata: Metadata = {
   title: "Privacy Policy",
-  description: "How SpaceLink collects, uses, and protects your personal data.",
+  description: "How Locale collects, uses, and protects your personal data.",
 }
 
 export default function PrivacyPage() {
@@ -15,7 +15,7 @@ export default function PrivacyPage() {
         <section>
           <h2>1. Who we are</h2>
           <p>
-            SpaceLink (&quot;we&quot;, &quot;us&quot;) operates a property listing platform connecting
+            Locale (&quot;we&quot;, &quot;us&quot;) operates a property listing platform connecting
             tenants and landlords in Kenya. We are committed to protecting your personal data in
             accordance with the Kenya Data Protection Act, 2019.
           </p>
@@ -65,7 +65,7 @@ export default function PrivacyPage() {
           <p>
             Under the Kenya Data Protection Act, you have the right to access, correct, or delete
             your personal data, and to object to or restrict its processing. To exercise these
-            rights, email <a href="mailto:hello@spacelink.co.ke" className="text-brand-600 hover:underline">hello@spacelink.co.ke</a>.
+            rights, email <a href="mailto:hello@locale.co.ke" className="text-brand-600 hover:underline">hello@locale.co.ke</a>.
           </p>
         </section>
 

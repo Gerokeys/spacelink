@@ -64,7 +64,7 @@ export function Navbar() {
         >
           <Image
             src={transparent ? "/images/logo-white.png" : "/images/logo.png"}
-            alt="SpaceLink"
+            alt="Locale"
             width={220}
             height={80}
             className="h-10 w-auto"

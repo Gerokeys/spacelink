@@ -4,7 +4,7 @@ import { toWhatsAppNumber } from "@/lib/utils"
 // Resend can only send from a domain verified in your Resend account.
 // onboarding@resend.dev works out of the box but only delivers to the
 // Resend account owner's email — verify a real domain for production.
-const FROM = process.env.EMAIL_FROM ?? "SpaceLink <onboarding@resend.dev>"
+const FROM = process.env.EMAIL_FROM ?? "Locale <onboarding@resend.dev>"
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000"
 
 // Lazy-initialize so a missing key doesn't crash the build
@@ -50,13 +50,13 @@ export async function sendInquiryNotification({
 
   const waNumber = toWhatsAppNumber(tenantPhone)
   const waLink = waNumber
-    ? `https://wa.me/${waNumber}?text=${encodeURIComponent(`Hi ${tenantName}, thanks for your inquiry about "${listingTitle}" on SpaceLink. `)}`
+    ? `https://wa.me/${waNumber}?text=${encodeURIComponent(`Hi ${tenantName}, thanks for your inquiry about "${listingTitle}" on Locale. `)}`
     : null
 
   await resend.emails.send({
     from: FROM,
     to: landlordEmail,
-    subject: `New inquiry for "${listingTitle}" — SpaceLink`,
+    subject: `New inquiry for "${listingTitle}" — Locale`,
     html: `
       <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto;">
         <h2 style="color: #2a2a33;">New Inquiry Received</h2>
@@ -82,7 +82,7 @@ export async function sendInquiryNotification({
           View in Dashboard
         </a>
         <p style="color: #999; font-size: 12px; margin-top: 24px;">
-          SpaceLink · Nairobi, Kenya
+          Locale · Nairobi, Kenya
         </p>
       </div>
     `,
@@ -106,7 +106,7 @@ export async function sendInquiryConfirmation({
   await resend.emails.send({
     from: FROM,
     to: tenantEmail,
-    subject: `Your inquiry was sent — SpaceLink`,
+    subject: `Your inquiry was sent — Locale`,
     html: `
       <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto;">
         <h2 style="color: #2a2a33;">Inquiry Sent!</h2>
@@ -119,7 +119,7 @@ export async function sendInquiryConfirmation({
           View Listing
         </a>
         <p style="color: #999; font-size: 12px; margin-top: 24px;">
-          SpaceLink · <a href="${APP_URL}">spacelink.co.ke</a>
+          Locale · <a href="${APP_URL}">locale.co.ke</a>
         </p>
       </div>
     `,
@@ -143,19 +143,19 @@ export async function sendListingApproved({
   await resend.emails.send({
     from: FROM,
     to: ownerEmail,
-    subject: `Your listing is live — SpaceLink`,
+    subject: `Your listing is live — Locale`,
     html: `
       <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto;">
         <h2 style="color: #2a2a33;">Your listing is live!</h2>
         <p>Hi ${esc(ownerName)},</p>
-        <p><strong>${esc(listingTitle)}</strong> has been approved and is now live on SpaceLink.</p>
+        <p><strong>${esc(listingTitle)}</strong> has been approved and is now live on Locale.</p>
         <a href="${APP_URL}/listings/${listingId}"
            style="display: inline-block; background: #006aff; color: white; padding: 12px 24px;
                   border-radius: 6px; text-decoration: none; margin-top: 8px;">
           View Your Listing
         </a>
         <p style="color: #999; font-size: 12px; margin-top: 24px;">
-          SpaceLink · <a href="${APP_URL}">spacelink.co.ke</a>
+          Locale · <a href="${APP_URL}">locale.co.ke</a>
         </p>
       </div>
     `,

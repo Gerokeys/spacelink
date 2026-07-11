@@ -41,7 +41,7 @@ export default async function AdminOverviewPage() {
     <div className="max-w-5xl">
       <div className="mb-8">
         <h1 className="text-2xl font-bold text-gray-900">Admin Overview</h1>
-        <p className="text-gray-500 text-sm mt-1">Manage listings, users, and inquiries across SpaceLink</p>
+        <p className="text-gray-500 text-sm mt-1">Manage listings, users, and inquiries across Locale</p>
       </div>
 
       {/* Stats */}

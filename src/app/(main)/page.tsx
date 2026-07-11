@@ -166,12 +166,12 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* ── Why SpaceLink ── */}
+      {/* ── Why Locale ── */}
       <section className="container mx-auto px-4 py-14">
         <div className="text-center mb-10">
-          <h2 className="text-2xl font-bold text-stone-900 mb-2">Why SpaceLink?</h2>
+          <h2 className="text-2xl font-bold text-stone-900 mb-2">Why Locale?</h2>
           <p className="text-stone-500 text-sm max-w-lg mx-auto">
-            We built SpaceLink because finding a home in Kenya is unnecessarily hard. Here's what makes us different.
+            We built Locale because finding a home in Kenya is unnecessarily hard. Here's what makes us different.
           </p>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
@@ -211,7 +211,7 @@ export default async function HomePage() {
             <div className="border border-dashed border-stone-200 rounded-2xl py-16 text-center bg-stone-50">
               <Building2 className="w-10 h-10 text-stone-300 mx-auto mb-3" />
               <p className="text-stone-500 font-medium mb-1">No listings yet</p>
-              <p className="text-stone-400 text-sm mb-5">Be the first to post a space on SpaceLink</p>
+              <p className="text-stone-400 text-sm mb-5">Be the first to post a space on Locale</p>
               <Link href="/dashboard/landlord/listings/new"><Button>Post your first listing</Button></Link>
             </div>
           )}
@@ -230,7 +230,7 @@ export default async function HomePage() {
               <Home className="w-5 h-5 text-brand-600" />
             </div>
             <h3 className="text-xl font-bold text-stone-900 mb-2">Looking for a space?</h3>
-            <p className="text-stone-500 text-sm mb-5">SpaceLink connects you directly with landlords across Kenya. No agents, no hidden fees.</p>
+            <p className="text-stone-500 text-sm mb-5">Locale connects you directly with landlords across Kenya. No agents, no hidden fees.</p>
             <ul className="space-y-2.5 mb-6">
               {TENANT_BENEFITS.map((b) => (
                 <li key={b} className="flex items-start gap-2.5 text-sm text-stone-700">
@@ -251,7 +251,7 @@ export default async function HomePage() {
               <Building2 className="w-5 h-5 text-brand-400" />
             </div>
             <h3 className="text-xl font-bold mb-2">Have a space to rent?</h3>
-            <p className="text-stone-400 text-sm mb-5">List on SpaceLink and reach thousands of verified tenants. It's completely free to get started.</p>
+            <p className="text-stone-400 text-sm mb-5">List on Locale and reach thousands of verified tenants. It's completely free to get started.</p>
             <ul className="space-y-2.5 mb-6">
               {LANDLORD_BENEFITS.map((b) => (
                 <li key={b} className="flex items-start gap-2.5 text-sm text-stone-300">
@@ -329,7 +329,7 @@ export default async function HomePage() {
       <section className="bg-white border-y border-stone-200 py-14">
         <div className="container mx-auto px-4 max-w-3xl">
           <div className="text-center mb-10">
-            <h2 className="text-2xl font-bold text-stone-900 mb-2">How SpaceLink works</h2>
+            <h2 className="text-2xl font-bold text-stone-900 mb-2">How Locale works</h2>
             <p className="text-stone-500 text-sm">Three steps to finding your next space</p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">

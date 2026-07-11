@@ -16,7 +16,7 @@ const LINKS = {
     { label: "Manage inquiries", href: "/dashboard/landlord/inquiries" },
   ],
   Company: [
-    { label: "About SpaceLink", href: "/about" },
+    { label: "About Locale", href: "/about" },
     { label: "Contact us", href: "/contact" },
     { label: "Privacy Policy", href: "/privacy" },
     { label: "Terms of Service", href: "/terms" },
@@ -36,7 +36,7 @@ export function Footer() {
             <Link href="/" className="inline-flex items-center mb-4">
               <Image
                 src="/images/logo.png"
-                alt="SpaceLink"
+                alt="Locale"
                 width={140}
                 height={48}
                 className="h-12 w-auto"
@@ -51,11 +51,11 @@ export function Footer() {
                 Nairobi, Kenya
               </div>
               <a
-                href="mailto:hello@spacelink.co.ke"
+                href="mailto:hello@locale.co.ke"
                 className="flex items-center gap-2 hover:text-brand-600 transition-colors"
               >
                 <Mail className="w-3.5 h-3.5 shrink-0 text-brand-500" />
-                hello@spacelink.co.ke
+                hello@locale.co.ke
               </a>
             </div>
           </div>
@@ -82,7 +82,7 @@ export function Footer() {
 
         {/* Bottom bar */}
         <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-6 text-xs text-gray-400">
-          <p>© {new Date().getFullYear()} SpaceLink Technologies Ltd. All rights reserved.</p>
+          <p>© {new Date().getFullYear()} Locale Technologies Ltd. All rights reserved.</p>
           <p className="flex items-center gap-1">
             <MapPin className="w-3 h-3 text-brand-500" /> Built in Nairobi, Kenya
           </p>

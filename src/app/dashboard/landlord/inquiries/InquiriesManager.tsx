@@ -143,7 +143,7 @@ export function InquiriesManager({ initialInquiries }: { initialInquiries: Inqui
                   {toWhatsAppNumber(inquiry.phone) && (
                     <a
                       href={`https://wa.me/${toWhatsAppNumber(inquiry.phone)}?text=${encodeURIComponent(
-                        `Hi ${inquiry.tenant.name ?? ""}, thanks for your inquiry about "${inquiry.listing.title}" on SpaceLink. `
+                        `Hi ${inquiry.tenant.name ?? ""}, thanks for your inquiry about "${inquiry.listing.title}" on Locale. `
                       )}`}
                       target="_blank"
                       rel="noopener noreferrer"
@@ -154,7 +154,7 @@ export function InquiriesManager({ initialInquiries }: { initialInquiries: Inqui
                     </a>
                   )}
                   {inquiry.tenant.email && (
-                    <a href={`mailto:${inquiry.tenant.email}?subject=${encodeURIComponent(`Re: ${inquiry.listing.title} — SpaceLink`)}`}>
+                    <a href={`mailto:${inquiry.tenant.email}?subject=${encodeURIComponent(`Re: ${inquiry.listing.title} — Locale`)}`}>
                       <Button size="sm" variant="outline" className="gap-1.5">
                         <Mail className="w-3.5 h-3.5" /> Reply by email
                       </Button>

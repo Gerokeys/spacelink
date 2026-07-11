@@ -26,7 +26,7 @@ export default function Icon() {
         }}
       >
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={src} alt="SpaceLink" style={{ width: "100%", height: "100%", objectFit: "contain" }} />
+        <img src={src} alt="Locale" style={{ width: "100%", height: "100%", objectFit: "contain" }} />
       </div>
     ),
     { ...size }

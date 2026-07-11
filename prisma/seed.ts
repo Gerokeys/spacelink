@@ -18,10 +18,10 @@ async function main() {
 
   // Create a test admin user
   const admin = await db.user.upsert({
-    where: { email: "admin@spacelink.co.ke" },
+    where: { email: "admin@locale.co.ke" },
     create: {
-      email: "admin@spacelink.co.ke",
-      name: "SpaceLink Admin",
+      email: "admin@locale.co.ke",
+      name: "Locale Admin",
       role: "ADMIN",
       emailVerified: new Date(),
     },

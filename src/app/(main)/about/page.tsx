@@ -4,8 +4,8 @@ import { Button } from "@/components/ui/button"
 import type { Metadata } from "next"
 
 export const metadata: Metadata = {
-  title: "About SpaceLink",
-  description: "SpaceLink is Kenya's modern platform for finding residential, office, and commercial spaces directly from verified landlords.",
+  title: "About Locale",
+  description: "Locale is Kenya's modern platform for finding residential, office, and commercial spaces directly from verified landlords.",
 }
 
 const VALUES = [
@@ -34,12 +34,12 @@ const VALUES = [
 export default function AboutPage() {
   return (
     <div className="container mx-auto px-4 py-12 max-w-3xl">
-      <h1 className="text-3xl font-bold text-gray-900 mb-3">About SpaceLink</h1>
+      <h1 className="text-3xl font-bold text-gray-900 mb-3">About Locale</h1>
       <p className="text-gray-600 leading-relaxed mb-10">
-        SpaceLink is Kenya&apos;s modern platform for finding a space to live and work.
+        Locale is Kenya&apos;s modern platform for finding a space to live and work.
         We connect tenants directly with verified landlords — no agents, no viewing fees,
         no runaround. Whether you&apos;re looking for a bedsitter in Roysambu, an office in
-        Westlands, or a shop along Ngong Road, SpaceLink helps you find it, see it, and
+        Westlands, or a shop along Ngong Road, Locale helps you find it, see it, and
         secure it faster.
       </p>
 

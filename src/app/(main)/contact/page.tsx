@@ -3,7 +3,7 @@ import type { Metadata } from "next"
 
 export const metadata: Metadata = {
   title: "Contact Us",
-  description: "Get in touch with the SpaceLink team.",
+  description: "Get in touch with the Locale team.",
 }
 
 export default function ContactPage() {
@@ -16,7 +16,7 @@ export default function ContactPage() {
 
       <div className="space-y-4">
         <a
-          href="mailto:hello@spacelink.co.ke"
+          href="mailto:hello@locale.co.ke"
           className="flex items-start gap-4 bg-white border border-gray-200 rounded-xl p-5 hover:border-brand-300 transition-colors"
         >
           <div className="w-10 h-10 rounded-lg bg-brand-50 flex items-center justify-center shrink-0">
@@ -24,7 +24,7 @@ export default function ContactPage() {
           </div>
           <div>
             <h2 className="font-semibold text-gray-900">Email</h2>
-            <p className="text-sm text-gray-500 mt-0.5">hello@spacelink.co.ke</p>
+            <p className="text-sm text-gray-500 mt-0.5">hello@locale.co.ke</p>
             <p className="text-xs text-gray-400 mt-1">We usually respond within one business day.</p>
           </div>
         </a>

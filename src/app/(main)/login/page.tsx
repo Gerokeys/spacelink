@@ -32,7 +32,7 @@ export default function LoginPage() {
             <div className="w-10 h-10 rounded-xl bg-brand-600 flex items-center justify-center">
               <Home className="w-5 h-5 text-white" />
             </div>
-            <span className="font-bold text-xl text-gray-900">SpaceLink</span>
+            <span className="font-bold text-xl text-gray-900">Locale</span>
           </Link>
           <h1 className="text-2xl font-bold text-gray-900">Welcome back</h1>
           <p className="text-sm text-gray-500 mt-1">Sign in to your account</p>

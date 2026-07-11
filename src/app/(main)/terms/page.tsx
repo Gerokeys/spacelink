@@ -2,7 +2,7 @@ import type { Metadata } from "next"
 
 export const metadata: Metadata = {
   title: "Terms of Service",
-  description: "The terms that govern your use of SpaceLink.",
+  description: "The terms that govern your use of Locale.",
 }
 
 export default function TermsPage() {
@@ -15,15 +15,15 @@ export default function TermsPage() {
         <section>
           <h2>1. Acceptance</h2>
           <p>
-            By using SpaceLink you agree to these terms. If you do not agree, please do not use
+            By using Locale you agree to these terms. If you do not agree, please do not use
             the platform.
           </p>
         </section>
 
         <section>
-          <h2>2. What SpaceLink is</h2>
+          <h2>2. What Locale is</h2>
           <p>
-            SpaceLink is a listing platform that connects tenants and landlords. We are not a
+            Locale is a listing platform that connects tenants and landlords. We are not a
             party to any tenancy agreement, we do not own or manage the listed properties, and we
             do not handle rent or deposits. Any agreement you enter is between you and the other
             party directly.
@@ -53,7 +53,7 @@ export default function TermsPage() {
           <p>
             Always view a property in person and verify ownership before paying any money. Never
             send a deposit to someone you have not met or for a property you have not seen.
-            SpaceLink is not liable for losses arising from dealings between users.
+            Locale is not liable for losses arising from dealings between users.
           </p>
         </section>
 
@@ -61,7 +61,7 @@ export default function TermsPage() {
           <h2>6. Liability</h2>
           <p>
             The platform is provided &quot;as is&quot;. To the maximum extent permitted by law,
-            SpaceLink is not liable for indirect or consequential losses arising from your use of
+            Locale is not liable for indirect or consequential losses arising from your use of
             the platform.
           </p>
         </section>
@@ -78,7 +78,7 @@ export default function TermsPage() {
           <h2>8. Contact</h2>
           <p>
             Questions about these terms? Email{" "}
-            <a href="mailto:hello@spacelink.co.ke" className="text-brand-600 hover:underline">hello@spacelink.co.ke</a>.
+            <a href="mailto:hello@locale.co.ke" className="text-brand-600 hover:underline">hello@locale.co.ke</a>.
           </p>
         </section>
       </div>

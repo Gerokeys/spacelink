@@ -15,8 +15,8 @@ export const viewport: Viewport = {
 
 export const metadata: Metadata = {
   title: {
-    default: "SpaceLink — Find Your Perfect Space in Kenya",
-    template: "%s | SpaceLink",
+    default: "Locale — Find Your Perfect Space in Kenya",
+    template: "%s | Locale",
   },
   description:
     "Discover residential, office, and commercial spaces across Kenya. Verified listings, map search, and direct contact with landlords.",
@@ -24,7 +24,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "en_KE",
-    siteName: "SpaceLink",
+    siteName: "Locale",
   },
 }
 

@@ -136,7 +136,7 @@ export function InquiryForm({ listingId, listingTitle }: InquiryFormProps) {
       </Button>
 
       <p className="text-xs text-gray-400 text-center">
-        SpaceLink does not charge tenants. Contact is free.
+        Locale does not charge tenants. Contact is free.
       </p>
     </form>
   )

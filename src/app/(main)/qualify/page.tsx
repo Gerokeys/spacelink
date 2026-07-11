@@ -2,7 +2,7 @@ import { QualifyForm } from "./QualifyForm"
 import type { Metadata } from "next"
 
 export const metadata: Metadata = {
-  title: "Find What You Qualify For — SpaceLink",
+  title: "Find What You Qualify For — Locale",
   description: "Answer a few questions and discover which listings fit your budget and lifestyle.",
 }
 
