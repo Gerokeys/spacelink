@@ -13,7 +13,14 @@ export const viewport: Viewport = {
   maximumScale: 1,
 }
 
+const SITE_URL =
+  process.env.NEXT_PUBLIC_APP_URL?.startsWith("http")
+    ? process.env.NEXT_PUBLIC_APP_URL
+    : "https://locale.co.ke"
+
 export const metadata: Metadata = {
+  // Makes the generated opengraph-image / icon URLs absolute when shared
+  metadataBase: new URL(SITE_URL),
   title: {
     default: "Locale — Find Your Perfect Space in Kenya",
     template: "%s | Locale",
@@ -25,6 +32,9 @@ export const metadata: Metadata = {
     type: "website",
     locale: "en_KE",
     siteName: "Locale",
+  },
+  twitter: {
+    card: "summary_large_image",
   },
 }
 
