@@ -2,8 +2,9 @@
 
 import { signIn } from "next-auth/react"
 import { useSearchParams } from "next/navigation"
-import { Home, AlertCircle } from "lucide-react"
+import { AlertCircle } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { Logo } from "@/components/layout/Logo"
 import Link from "next/link"
 
 // NextAuth redirects here with ?error=<code> when sign-in fails
@@ -28,11 +29,8 @@ export default function LoginPage() {
       <div className="w-full max-w-sm">
         {/* Logo */}
         <div className="flex flex-col items-center mb-8">
-          <Link href="/" className="flex items-center gap-2 mb-6">
-            <div className="w-10 h-10 rounded-xl bg-brand-600 flex items-center justify-center">
-              <Home className="w-5 h-5 text-white" />
-            </div>
-            <span className="font-bold text-xl text-gray-900">Locale</span>
+          <Link href="/" aria-label="Locale home" className="mb-6">
+            <Logo className="text-3xl" />
           </Link>
           <h1 className="text-2xl font-bold text-gray-900">Welcome back</h1>
           <p className="text-sm text-gray-500 mt-1">Sign in to your account</p>

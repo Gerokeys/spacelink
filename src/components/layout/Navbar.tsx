@@ -1,12 +1,12 @@
 "use client"
 
 import Link from "next/link"
-import Image from "next/image"
 import { usePathname } from "next/navigation"
 import { useSession, signOut } from "next-auth/react"
 import { useEffect, useState } from "react"
 import { Menu, X, Heart, MessageSquare, LayoutDashboard, Plus } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { Logo } from "@/components/layout/Logo"
 import { cn, getInitials } from "@/lib/utils"
 
 export function Navbar() {
@@ -60,16 +60,10 @@ export function Navbar() {
         {/* Logo — centered on mobile, left on desktop */}
         <Link
           href="/"
+          aria-label="Locale home"
           className="absolute left-1/2 -translate-x-1/2 md:static md:translate-x-0 flex items-center shrink-0"
         >
-          <Image
-            src={transparent ? "/images/logo-white.png" : "/images/logo.png"}
-            alt="Locale"
-            width={220}
-            height={80}
-            className="h-10 w-auto"
-            priority
-          />
+          <Logo onDark={transparent} className="text-2xl" />
         </Link>
 
         {/* Desktop nav */}

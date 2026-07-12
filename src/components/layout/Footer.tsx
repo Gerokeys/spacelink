@@ -1,6 +1,6 @@
 import Link from "next/link"
-import Image from "next/image"
 import { MapPin, Mail } from "lucide-react"
+import { Logo } from "@/components/layout/Logo"
 
 const LINKS = {
   Discover: [
@@ -33,14 +33,8 @@ export function Footer() {
 
           {/* Brand */}
           <div className="col-span-2 md:col-span-1">
-            <Link href="/" className="inline-flex items-center mb-4">
-              <Image
-                src="/images/logo.png"
-                alt="Locale"
-                width={140}
-                height={48}
-                className="h-12 w-auto"
-              />
+            <Link href="/" aria-label="Locale home" className="inline-flex items-center mb-4">
+              <Logo className="text-2xl" />
             </Link>
             <p className="text-sm text-gray-500 leading-relaxed mb-5">
               Kenya's modern platform for finding residential, office, and commercial spaces — directly from verified landlords.
